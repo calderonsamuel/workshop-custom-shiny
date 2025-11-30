@@ -102,7 +102,7 @@
     "href": "index.html#el-flujo-de-comunicación",
     "title": "Creando Inputs y Outputs Personalizados para Shiny",
     "section": "El Flujo de Comunicación",
-    "text": "El Flujo de Comunicación\n\n\n\n\n\nflowchart LR\n    subgraph Browser[\"🌐 Navegador (JavaScript)\"]\n        A[Usuario hace clic] --&gt; B[Input Binding]\n        G[Output Binding] --&gt; H[DOM actualizado]\n    end\n\n    subgraph Server[\"🖥️ Servidor (R)\"]\n        C[\"input$x\"] --&gt; D[Lógica reactiva]\n        D --&gt; E[\"output$y\"]\n    end\n\n    B --&gt;|WebSocket| C\n    E --&gt;|WebSocket| G"
+    "text": "El Flujo de Comunicación\nJavaScript (Navegador):\nUsuario → Input Binding → WebSocket → input$x\nR (Servidor):\ninput$x → Lógica Reactiva → output$y\nJavaScript (Navegador):\noutput$y → WebSocket → Output Binding → DOM"
   },
   {
     "objectID": "index.html#dos-registros-centrales",

@@ -95,7 +95,7 @@
     code span.vs { color: #032f62; } /* VerbatimString */
     code span.wa { color: #ff5555; } /* Warning */
   </style>
-  <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto-58137fbb158908816614077980f8224c.css">
+  <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto-e710fbd9b89551458007f1078cda075d.css">
   <link href="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -187,10 +187,6 @@
       margin-right: 0; 
     }
   </style>
-  <meta name="mermaid-theme" content="neutral">
-  <script src="site_libs/quarto-diagram/mermaid.min.js"></script>
-  <script src="site_libs/quarto-diagram/mermaid-init.js"></script>
-  <link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -319,30 +315,12 @@ LatinR 2025
 </section>
 <section id="el-flujo-de-comunicación" class="slide level2">
 <h2>El Flujo de Comunicación</h2>
-<div class="cell" data-reveal="true" data-eval="true" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class=""><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-    subgraph Browser["🌐 Navegador (JavaScript)"]
-        A[Usuario hace clic] --&gt; B[Input Binding]
-        G[Output Binding] --&gt; H[DOM actualizado]
-    end
-
-    subgraph Server["🖥️ Servidor (R)"]
-        C["input$x"] --&gt; D[Lógica reactiva]
-        D --&gt; E["output$y"]
-    end
-
-    B --&gt;|WebSocket| C
-    E --&gt;|WebSocket| G
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
-</div>
+<p><strong>JavaScript (Navegador):</strong></p>
+<p>Usuario → <code>Input Binding</code> → <em>WebSocket</em> → <code>input$x</code></p>
+<p><strong>R (Servidor):</strong></p>
+<p><code>input$x</code> → Lógica Reactiva → <code>output$y</code></p>
+<p><strong>JavaScript (Navegador):</strong></p>
+<p><code>output$y</code> → <em>WebSocket</em> → <code>Output Binding</code> → DOM</p>
 </section>
 <section id="dos-registros-centrales" class="slide level2">
 <h2>Dos Registros Centrales</h2>

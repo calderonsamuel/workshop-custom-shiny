@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>workshop-outline – Creando Inputs y Outputs Personalizados para Shiny</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-92481153a6043bd15141adc35dc31452.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+
+
+
+
+<section id="workshop-outline-building-custom-shiny-inputs-and-outputs" class="level1">
+<h1>Workshop Outline: Building Custom Shiny Inputs and Outputs</h1>
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p><strong>Title:</strong> Beyond Built-in Widgets: Creating Custom Shiny Inputs and Outputs</p>
+<p><strong>Duration:</strong> 90 minutes</p>
+<p><strong>Participants:</strong> ~15 intermediate R/Shiny users</p>
+<p><strong>Format:</strong> Virtual, hands-on</p>
+<p><strong>Prerequisites:</strong></p>
+<ul>
+<li>Intermediate R experience</li>
+<li>Comfortable building basic Shiny apps (understands <code>ui</code>, <code>server</code>, reactivity)</li>
+<li>Minimal JavaScript/CSS experience expected (starter code is heavily commented)</li>
+<li>Repository cloned and dependencies installed before the session</li>
+</ul>
+<p><strong>Learning objectives:</strong></p>
+<ul>
+<li>Understand how Shiny’s JavaScript binding system connects browser and R server</li>
+<li>Build a functional custom input binding (multi-state toggle button)</li>
+<li>Build a functional custom output binding (dynamic stat card with conditional styling)</li>
+<li>Know where to find resources for more advanced implementations</li>
+</ul>
+<hr>
+</section>
+<section id="schedule" class="level2">
+<h2 class="anchored" data-anchor-id="schedule">Schedule</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Time</th>
+<th>Segment</th>
+<th>Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0:00–0:05</td>
+<td>Welcome and orientation</td>
+<td>5 min</td>
+</tr>
+<tr class="even">
+<td>0:05–0:15</td>
+<td>Conceptual foundation: How bindings work</td>
+<td>10 min</td>
+</tr>
+<tr class="odd">
+<td>0:15–0:55</td>
+<td>Hands-on 1: Custom input binding</td>
+<td>40 min</td>
+</tr>
+<tr class="even">
+<td>0:55–1:00</td>
+<td>Short break</td>
+<td>5 min</td>
+</tr>
+<tr class="odd">
+<td>1:00–1:20</td>
+<td>Hands-on 2: Custom output binding</td>
+<td>20 min</td>
+</tr>
+<tr class="even">
+<td>1:20–1:30</td>
+<td>Wrap-up and next steps</td>
+<td>10 min</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="segment-details" class="level2">
+<h2 class="anchored" data-anchor-id="segment-details">Segment Details</h2>
+<section id="welcome-and-orientation-5-min" class="level3">
+<h3 class="anchored" data-anchor-id="welcome-and-orientation-5-min">1. Welcome and Orientation (5 min)</h3>
+<p><strong>Content:</strong></p>
+<ul>
+<li>Confirm everyone has the repo cloned and can run the starter app</li>
+<li>Quick tour of repository structure</li>
+<li>Overview of what we’re building today (show finished demos)</li>
+</ul>
+<p><strong>Materials:</strong></p>
+<ul>
+<li>Repo README with setup verification checklist</li>
+<li>Two 30-second demo GIFs showing the finished input and output</li>
+</ul>
+<p><strong>Instructor script:</strong></p>
+<blockquote class="blockquote">
+<p>“Welcome everyone! Before we dive in, let’s make sure your environment is ready. Open the <code>00-demo-finished/app.R</code> file and click Run App. You should see a toggle button and a stat card. Thumbs up in chat if you see it working.”</p>
+</blockquote>
+<hr>
+</section>
+<section id="conceptual-foundation-how-bindings-work-10-min" class="level3">
+<h3 class="anchored" data-anchor-id="conceptual-foundation-how-bindings-work-10-min">2. Conceptual Foundation: How Bindings Work (10 min)</h3>
+<p><strong>Content:</strong></p>
+<ul>
+<li>The WebSocket connection between browser and R (brief, conceptual)</li>
+<li>Two registries: <code>Shiny.inputBindings</code> and <code>Shiny.outputBindings</code></li>
+<li>Anatomy of a binding: R function generates HTML → JavaScript class handles behavior → messages flow both directions</li>
+<li>The three essential input binding methods: <code>find()</code>, <code>getValue()</code>, <code>subscribe()</code></li>
+<li>The two essential output binding methods: <code>find()</code>, <code>renderValue()</code></li>
+</ul>
+<p><strong>Delivery:</strong></p>
+<ul>
+<li>Annotated diagram showing the communication flow</li>
+<li>Side-by-side comparison: built-in <code>selectInput</code> code vs.&nbsp;what we’ll build</li>
+</ul>
+<p><strong>Key talking points:</strong></p>
+<ol type="1">
+<li><p><strong>Shiny uses WebSockets</strong> for real-time, bidirectional communication between the R server and the JavaScript client. When your app loads, a persistent connection is established that allows continuous two-way messaging.</p></li>
+<li><p><strong>All bindings live in registries.</strong> When Shiny initializes, it calls <code>Shiny.bindAll()</code> to scan the DOM and associate each matching element with its appropriate binding. The registries use a priority system—higher numbers mean higher priority—which lets you override built-in bindings if needed.</p></li>
+<li><p><strong>The pattern is consistent.</strong> Once you understand the input binding pattern (<code>find</code> → <code>getValue</code> → <code>subscribe</code>), you can build any input. Once you understand the output pattern (<code>find</code> → <code>renderValue</code>), you can render anything.</p></li>
+</ol>
+<p><strong>Instructor note:</strong> Keep this brisk—aim for 8 minutes of content, 2 minutes for questions. The goal is a mental model, not deep understanding. That comes from building.</p>
+<p><strong>Key references:</strong></p>
+<ul>
+<li>Posit. “How to Create Custom Input Bindings.” 2024. <a href="https://shiny.posit.co/r/articles/build/js-custom-input/" class="uri">https://shiny.posit.co/r/articles/build/js-custom-input/</a></li>
+<li>Granjon, David. <em>Outstanding User Interfaces with Shiny</em>. Chapman and Hall/CRC, 2022. Chapter 6.</li>
+</ul>
+<hr>
+</section>
+<section id="hands-on-1-custom-input-binding-multi-state-toggle-40-min" class="level3">
+<h3 class="anchored" data-anchor-id="hands-on-1-custom-input-binding-multi-state-toggle-40-min">3. Hands-on 1: Custom Input Binding — Multi-State Toggle (40 min)</h3>
+<p><strong>What participants build:</strong></p>
+<p>A toggle button that cycles through three states (e.g., “All / Active / Completed” for a task filter). More interesting than a binary toggle, demonstrates that inputs can return any value type.</p>
+<p><strong>Why this component:</strong></p>
+<ul>
+<li>More impressive than a simple on/off toggle</li>
+<li>Demonstrates that <code>getValue()</code> can return any data type</li>
+<li>Requires handling click events and cycling through states</li>
+<li>Natural use case (filtering) makes the value immediately understandable</li>
+</ul>
+<section id="structure" class="level4">
+<h4 class="anchored" data-anchor-id="structure">Structure</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 87%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Time</th>
+<th>Activity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0–8 min</td>
+<td>Walkthrough of starter code (R UI function + JS skeleton)</td>
+</tr>
+<tr class="even">
+<td>8–20 min</td>
+<td>Guided coding: implement <code>find()</code> and <code>getValue()</code></td>
+</tr>
+<tr class="odd">
+<td>20–28 min</td>
+<td>Guided coding: implement <code>subscribe()</code> with click handler</td>
+</tr>
+<tr class="even">
+<td>28–35 min</td>
+<td>Guided coding: implement <code>receiveMessage()</code> for update function</td>
+</tr>
+<tr class="odd">
+<td>35–40 min</td>
+<td>Test it: connect to a reactive output, verify round-trip</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="starter-code-provides" class="level4">
+<h4 class="anchored" data-anchor-id="starter-code-provides">Starter Code Provides</h4>
+<p><strong>R function</strong> <code>triStateInput(inputId, label, choices, selected)</code>:</p>
+<ul>
+<li>Complete HTML structure using <code>tags$</code></li>
+<li>Attached CSS dependency via <code>htmltools::htmlDependency()</code></li>
+<li>Data attributes storing choices and current selection</li>
+</ul>
+<p><strong>CSS file</strong> <code>tristate.css</code>:</p>
+<ul>
+<li>Fully written styling for the three-state visual appearance</li>
+<li>Active state highlighting</li>
+<li>Hover effects</li>
+</ul>
+<p><strong>JS file</strong> <code>tristate.js</code>:</p>
+<ul>
+<li>Binding skeleton with <code>$.extend(myBinding, { ... })</code></li>
+<li>Detailed comments explaining each method’s purpose</li>
+<li>Placeholder <code>// YOUR CODE HERE</code> markers</li>
+</ul>
+</section>
+<section id="participants-write" class="level4">
+<h4 class="anchored" data-anchor-id="participants-write">Participants Write</h4>
+<ol type="1">
+<li><p><strong><code>find(scope)</code></strong> — The jQuery selector to locate all instances</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>find<span class="op">:</span> <span class="kw">function</span>(scope) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="fu">$</span>(scope)<span class="op">.</span><span class="fu">find</span>(<span class="st">'.tri-state-input'</span>)<span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p><strong><code>getValue(el)</code></strong> — Extract the current state from a data attribute</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>getValue<span class="op">:</span> <span class="kw">function</span>(el) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="fu">$</span>(el)<span class="op">.</span><span class="fu">data</span>(<span class="st">'selected'</span>)<span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p><strong><code>subscribe(el, callback)</code></strong> — Click handler that cycles states</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>subscribe<span class="op">:</span> <span class="kw">function</span>(el<span class="op">,</span> callback) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">$</span>(el)<span class="op">.</span><span class="fu">on</span>(<span class="st">'click.triStateBinding'</span><span class="op">,</span> <span class="st">'.tri-state-option'</span><span class="op">,</span> <span class="kw">function</span>(e) {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> value <span class="op">=</span> <span class="fu">$</span>(<span class="kw">this</span>)<span class="op">.</span><span class="fu">data</span>(<span class="st">'value'</span>)<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">$</span>(el)<span class="op">.</span><span class="fu">data</span>(<span class="st">'selected'</span><span class="op">,</span> value)<span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Update visual state</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">$</span>(el)<span class="op">.</span><span class="fu">find</span>(<span class="st">'.tri-state-option'</span>)<span class="op">.</span><span class="fu">removeClass</span>(<span class="st">'active'</span>)<span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">$</span>(<span class="kw">this</span>)<span class="op">.</span><span class="fu">addClass</span>(<span class="st">'active'</span>)<span class="op">;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">callback</span>()<span class="op">;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p><strong><code>setValue(el, value)</code></strong> and <strong><code>receiveMessage(el, data)</code></strong> — For the update function</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>setValue<span class="op">:</span> <span class="kw">function</span>(el<span class="op">,</span> value) {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">$</span>(el)<span class="op">.</span><span class="fu">data</span>(<span class="st">'selected'</span><span class="op">,</span> value)<span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">$</span>(el)<span class="op">.</span><span class="fu">find</span>(<span class="st">'.tri-state-option'</span>)<span class="op">.</span><span class="fu">removeClass</span>(<span class="st">'active'</span>)<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">$</span>(el)<span class="op">.</span><span class="fu">find</span>(<span class="st">'.tri-state-option[data-value="'</span> <span class="op">+</span> value <span class="op">+</span> <span class="st">'"]'</span>)<span class="op">.</span><span class="fu">addClass</span>(<span class="st">'active'</span>)<span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>}<span class="op">,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>receiveMessage<span class="op">:</span> <span class="kw">function</span>(el<span class="op">,</span> data) {</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (data<span class="op">.</span><span class="fu">hasOwnProperty</span>(<span class="st">'selected'</span>)) {</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="fu">setValue</span>(el<span class="op">,</span> data<span class="op">.</span><span class="at">selected</span>)<span class="op">;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">$</span>(el)<span class="op">.</span><span class="fu">trigger</span>(<span class="st">'change'</span>)<span class="op">;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+</ol>
+</section>
+<section id="checkpoints" class="level4">
+<h4 class="anchored" data-anchor-id="checkpoints">Checkpoints</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 77%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>After…</th>
+<th>Verification</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>getValue()</code></td>
+<td>Instructor shows how to verify value in R console with <code>input$x</code></td>
+</tr>
+<tr class="even">
+<td><code>subscribe()</code></td>
+<td>Clicking should update <code>input$x</code> reactively</td>
+</tr>
+<tr class="odd">
+<td><code>receiveMessage()</code></td>
+<td><code>updateTriStateInput()</code> should work from server</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="common-pitfalls-to-address" class="level4">
+<h4 class="anchored" data-anchor-id="common-pitfalls-to-address">Common Pitfalls to Address</h4>
+<ol type="1">
+<li><strong>Forgetting to return a value from <code>getValue()</code></strong> — The binding fails silently</li>
+<li><strong>Not using event namespacing</strong> — Use <code>click.triStateBinding</code> so <code>unsubscribe()</code> can cleanly remove handlers</li>
+<li><strong>Forgetting to trigger change event in <code>receiveMessage()</code></strong> — The update won’t propagate to other reactive dependencies</li>
+</ol>
+</section>
+<section id="extension-if-time-permits" class="level4">
+<h4 class="anchored" data-anchor-id="extension-if-time-permits">Extension (if time permits)</h4>
+<p>Add <code>getRatePolicy()</code> to debounce rapid clicks:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>getRatePolicy<span class="op">:</span> <span class="kw">function</span>() {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> { <span class="dt">policy</span><span class="op">:</span> <span class="st">'debounce'</span><span class="op">,</span> <span class="dt">delay</span><span class="op">:</span> <span class="dv">250</span> }<span class="op">;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Key references:</strong></p>
+<ul>
+<li>Posit. “How to Create Custom Input Bindings.” 2024. <a href="https://shiny.posit.co/r/articles/build/js-custom-input/" class="uri">https://shiny.posit.co/r/articles/build/js-custom-input/</a></li>
+<li>Coene, John. <em>JavaScript for R</em>. Chapman and Hall/CRC, 2021. Chapters 6–7.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="short-break-5-min" class="level3">
+<h3 class="anchored" data-anchor-id="short-break-5-min">4. Short Break (5 min)</h3>
+<p>Encourage participants to stand, stretch. Instructor available for quick troubleshooting.</p>
+<p><strong>Instructor note:</strong> Use this time to scan chat for unresolved questions. If multiple people are stuck at the same point, address it briefly when reconvening.</p>
+<hr>
+</section>
+<section id="hands-on-2-custom-output-binding-dynamic-stat-card-20-min" class="level3">
+<h3 class="anchored" data-anchor-id="hands-on-2-custom-output-binding-dynamic-stat-card-20-min">5. Hands-on 2: Custom Output Binding — Dynamic Stat Card (20 min)</h3>
+<p><strong>What participants build:</strong></p>
+<p>A stat card that displays a metric value with a title, and changes background color based on thresholds (e.g., green/yellow/red for KPI status). Demonstrates that outputs can receive structured data and apply conditional rendering.</p>
+<p><strong>Why this component:</strong></p>
+<ul>
+<li>Visually satisfying result</li>
+<li>Shows that <code>renderValue()</code> receives arbitrary R data (as JSON)</li>
+<li>Conditional styling demonstrates real-world use case</li>
+<li>Simpler than input binding—good for reinforcing the pattern quickly</li>
+</ul>
+<section id="structure-1" class="level4">
+<h4 class="anchored" data-anchor-id="structure-1">Structure</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 86%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Time</th>
+<th>Activity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0–5 min</td>
+<td>Walkthrough of starter code (R UI + render function + JS)</td>
+</tr>
+<tr class="even">
+<td>5–15 min</td>
+<td>Guided coding: implement <code>find()</code> and <code>renderValue()</code></td>
+</tr>
+<tr class="odd">
+<td>15–20 min</td>
+<td>Test and extend: add threshold-based CSS class</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="starter-code-provides-1" class="level4">
+<h4 class="anchored" data-anchor-id="starter-code-provides-1">Starter Code Provides</h4>
+<p><strong>R function</strong> <code>statCardOutput(outputId, width)</code>:</p>
+<ul>
+<li>Complete HTML structure with placeholder elements for title and value</li>
+<li>CSS class <code>stat-card</code> for JavaScript binding to find</li>
+</ul>
+<p><strong>R function</strong> <code>renderStatCard(expr)</code>:</p>
+<ul>
+<li>Uses <code>exprToFunction()</code> pattern (fully written)</li>
+<li>Returns a list with <code>title</code>, <code>value</code>, and <code>status</code> fields</li>
+</ul>
+<p><strong>CSS file</strong> <code>statcard.css</code>:</p>
+<ul>
+<li>Card styling (shadow, padding, typography)</li>
+<li>Three color classes: <code>.status-good</code>, <code>.status-warning</code>, <code>.status-bad</code></li>
+</ul>
+<p><strong>JS file</strong> <code>statcard.js</code>:</p>
+<ul>
+<li>Binding skeleton with comments</li>
+<li>Placeholder markers for participant code</li>
+</ul>
+</section>
+<section id="participants-write-1" class="level4">
+<h4 class="anchored" data-anchor-id="participants-write-1">Participants Write</h4>
+<ol type="1">
+<li><p><strong><code>find(scope)</code></strong> — Locate stat card elements</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>find<span class="op">:</span> <span class="kw">function</span>(scope) {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="fu">$</span>(scope)<span class="op">.</span><span class="fu">find</span>(<span class="st">'.stat-card'</span>)<span class="op">;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p><strong><code>renderValue(el, data)</code></strong> — Update DOM with received data</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>renderValue<span class="op">:</span> <span class="kw">function</span>(el<span class="op">,</span> data) {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Set the title and value text</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">$</span>(el)<span class="op">.</span><span class="fu">find</span>(<span class="st">'.stat-title'</span>)<span class="op">.</span><span class="fu">text</span>(data<span class="op">.</span><span class="at">title</span>)<span class="op">;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">$</span>(el)<span class="op">.</span><span class="fu">find</span>(<span class="st">'.stat-value'</span>)<span class="op">.</span><span class="fu">text</span>(data<span class="op">.</span><span class="at">value</span>)<span class="op">;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Remove any existing status class and add the new one</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">$</span>(el)<span class="op">.</span><span class="fu">removeClass</span>(<span class="st">'status-good status-warning status-bad'</span>)<span class="op">;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (data<span class="op">.</span><span class="at">status</span>) {</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">$</span>(el)<span class="op">.</span><span class="fu">addClass</span>(<span class="st">'status-'</span> <span class="op">+</span> data<span class="op">.</span><span class="at">status</span>)<span class="op">;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+</ol>
+</section>
+<section id="testing" class="level4">
+<h4 class="anchored" data-anchor-id="testing">Testing</h4>
+<p>In <code>app.R</code>, the server already has:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>output<span class="sc">$</span>kpi_card <span class="ot">&lt;-</span> <span class="fu">renderStatCard</span>({</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  value <span class="ot">&lt;-</span> input<span class="sc">$</span>metric_slider</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  status <span class="ot">&lt;-</span> <span class="fu">case_when</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    value <span class="sc">&gt;=</span> <span class="dv">80</span> <span class="sc">~</span> <span class="st">"good"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    value <span class="sc">&gt;=</span> <span class="dv">50</span> <span class="sc">~</span> <span class="st">"warning"</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"bad"</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"Performance Score"</span>, <span class="at">value =</span> value, <span class="at">status =</span> status)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Participants adjust the slider and watch the card update in real-time with color changes.</p>
+<p><strong>Key references:</strong></p>
+<ul>
+<li>Posit. “Build Custom Output Objects.” 2024. <a href="https://shiny.posit.co/r/articles/build/building-outputs/" class="uri">https://shiny.posit.co/r/articles/build/building-outputs/</a></li>
+<li>Granjon, David. <em>Outstanding User Interfaces with Shiny</em>. Chapman and Hall/CRC, 2022. Chapter 7.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="wrap-up-and-next-steps-10-min" class="level3">
+<h3 class="anchored" data-anchor-id="wrap-up-and-next-steps-10-min">6. Wrap-up and Next Steps (10 min)</h3>
+<p><strong>Content:</strong></p>
+<ol type="1">
+<li><p><strong>Recap the pattern</strong> — The binding structure is consistent. Once you’ve built one input binding, you can build any input. Same for outputs.</p></li>
+<li><p><strong>Show how these patterns scale</strong> — Brief mention of:</p>
+<ul>
+<li><strong>shinyWidgets</strong> — Dozens of production-quality inputs built with these exact patterns</li>
+<li><strong>htmlwidgets</strong> — Framework for D3.js and other visualization libraries</li>
+<li><strong>shiny.react</strong> — React components in Shiny using similar binding concepts</li>
+</ul></li>
+<li><p><strong>Resources for going further:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Resource</th>
+<th>Best for</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>Outstanding User Interfaces with Shiny</em> (Granjon)</td>
+<td>Deep dives into binding internals</td>
+</tr>
+<tr class="even">
+<td><em>JavaScript for R</em> (Coene)</td>
+<td>JS fundamentals in R context</td>
+</tr>
+<tr class="odd">
+<td>htmlwidgets documentation</td>
+<td>D3.js and visualization outputs</td>
+</tr>
+<tr class="even">
+<td>posit-dev/shiny-bindings repo</td>
+<td>Emerging patterns, React integration</td>
+</tr>
+</tbody>
+</table></li>
+<li><p><strong>Q&amp;A</strong> — Open floor for questions</p></li>
+</ol>
+<p><strong>Handouts to share:</strong></p>
+<ul>
+<li>One-page binding method reference card (PDF)</li>
+<li>Annotated bibliography with URLs (Markdown)</li>
+<li>Link to workshop repository with all solutions</li>
+</ul>
+<p><strong>Closing script:</strong></p>
+<blockquote class="blockquote">
+<p>“You’ve now built a custom input and a custom output from scratch. The key insight is that the pattern is always the same: R generates HTML, JavaScript handles behavior, and WebSocket messages connect them. Everything else is just variations on this theme. The resources in the handout will take you deeper when you’re ready. Thanks for joining—happy binding building!”</p>
+</blockquote>
+<hr>
+</section>
+</section>
+<section id="repository-structure" class="level2">
+<h2 class="anchored" data-anchor-id="repository-structure">Repository Structure</h2>
+<pre><code>shiny-custom-bindings-workshop/
+├── README.md                     # Setup instructions, prerequisites
+├── 00-demo-finished/
+│   └── app.R                     # Finished app showing both components
+├── 01-input-starter/
+│   ├── app.R                     # Starter app with placeholder
+│   ├── R/
+│   │   └── triStateInput.R       # UI + update functions (complete)
+│   └── www/
+│       ├── css/
+│       │   └── tristate.css      # Styling (complete)
+│       └── js/
+│           └── tristate.js       # Binding skeleton (to complete)
+├── 02-input-solution/
+│   └── ...                       # Complete solution for reference
+├── 03-output-starter/
+│   ├── app.R
+│   ├── R/
+│   │   └── statCard.R            # UI + render functions (complete)
+│   └── www/
+│       ├── css/
+│       │   └── statcard.css      # Styling (complete)
+│       └── js/
+│           └── statcard.js       # Binding skeleton (to complete)
+├── 04-output-solution/
+│   └── ...
+└── reference/
+    ├── binding-cheatsheet.pdf
+    └── resources.md</code></pre>
+<hr>
+</section>
+<section id="instructor-notes" class="level2">
+<h2 class="anchored" data-anchor-id="instructor-notes">Instructor Notes</h2>
+<section id="virtual-delivery-considerations" class="level3">
+<h3 class="anchored" data-anchor-id="virtual-delivery-considerations">Virtual Delivery Considerations</h3>
+<ul>
+<li><strong>Screen sharing:</strong> Use large font size in IDE (14pt minimum). Consider a dark theme for better visibility on varied monitors.</li>
+<li><strong>Breakout rooms:</strong> If troubleshooting takes more than 30 seconds for one participant, offer to move them to a breakout room with a TA.</li>
+<li><strong>Chat monitoring:</strong> Have a co-instructor or TA dedicated to watching chat for questions and flagging urgent issues.</li>
+<li><strong>Solution files:</strong> Emphasize that participants who fall behind can copy from the solution folder to catch up. The learning happens from seeing the pattern, not just typing.</li>
+</ul>
+</section>
+<section id="timing-buffer" class="level3">
+<h3 class="anchored" data-anchor-id="timing-buffer">Timing Buffer</h3>
+<ul>
+<li>The 40-minute input segment has ~5 minutes flexibility</li>
+<li>If running long: abbreviate <code>receiveMessage()</code> walkthrough (participants can reference solution)</li>
+<li>If running fast: add the <code>getRatePolicy()</code> extension</li>
+<li>The output segment is designed to be faster; if the input runs over by 5 minutes, the output can compress to 15 minutes</li>
+</ul>
+</section>
+<section id="common-technical-issues" class="level3">
+<h3 class="anchored" data-anchor-id="common-technical-issues">Common Technical Issues</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 38%">
+<col style="width: 61%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Issue</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>“App won’t run”</td>
+<td>Check working directory is set to project root</td>
+</tr>
+<tr class="even">
+<td>“Changes don’t appear”</td>
+<td>Hard refresh browser (Ctrl+Shift+R / Cmd+Shift+R)</td>
+</tr>
+<tr class="odd">
+<td>“JavaScript error in console”</td>
+<td>Check for missing commas, semicolons in binding object</td>
+</tr>
+<tr class="even">
+<td>“Input value is undefined in R”</td>
+<td>Verify <code>getValue()</code> has explicit <code>return</code> statement</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="accessibility" class="level3">
+<h3 class="anchored" data-anchor-id="accessibility">Accessibility</h3>
+<ul>
+<li>Ensure all code comments are screen-reader friendly (no ASCII art)</li>
+<li>Provide transcript of the finished demo in README</li>
+<li>Use high-contrast colors in diagrams</li>
+<li>Share slides/materials in advance for participants using assistive technology</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="materials-checklist" class="level2">
+<h2 class="anchored" data-anchor-id="materials-checklist">Materials Checklist</h2>
+<section id="before-the-workshop" class="level3">
+<h3 class="anchored" data-anchor-id="before-the-workshop">Before the Workshop</h3>
+<ul class="task-list">
+<li><label><input type="checkbox">Repository published and tested on clean machine</label></li>
+<li><label><input type="checkbox">README with setup verification steps</label></li>
+<li><label><input type="checkbox">Demo GIFs created for finished components</label></li>
+<li><label><input type="checkbox">Slides for conceptual section (10 min)</label></li>
+<li><label><input type="checkbox">Binding cheatsheet PDF</label></li>
+<li><label><input type="checkbox">Resources markdown file</label></li>
+<li><label><input type="checkbox">Calendar invite with repo link and setup instructions sent</label></li>
+</ul>
+</section>
+<section id="day-of-workshop" class="level3">
+<h3 class="anchored" data-anchor-id="day-of-workshop">Day of Workshop</h3>
+<ul class="task-list">
+<li><label><input type="checkbox">Backup of all materials on local machine</label></li>
+<li><label><input type="checkbox">Screen sharing tested</label></li>
+<li><label><input type="checkbox">Breakout rooms configured</label></li>
+<li><label><input type="checkbox">Chat monitoring plan confirmed with TA</label></li>
+<li><label><input type="checkbox">Post-workshop survey link ready</label></li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<section id="primary-sources-used-in-workshop-content" class="level3">
+<h3 class="anchored" data-anchor-id="primary-sources-used-in-workshop-content">Primary Sources (used in workshop content)</h3>
+<p>Posit Software, PBC. “How to Create Custom Input Bindings.” 2024. <a href="https://shiny.posit.co/r/articles/build/js-custom-input/" class="uri">https://shiny.posit.co/r/articles/build/js-custom-input/</a></p>
+<p>Posit Software, PBC. “Build Custom Output Objects.” 2024. <a href="https://shiny.posit.co/r/articles/build/building-outputs/" class="uri">https://shiny.posit.co/r/articles/build/building-outputs/</a></p>
+<p>Posit Software, PBC. “Communicating with Shiny via JavaScript.” 2024. <a href="https://shiny.posit.co/r/articles/build/communicating-with-js/" class="uri">https://shiny.posit.co/r/articles/build/communicating-with-js/</a></p>
+<p>Granjon, David. <em>Outstanding User Interfaces with Shiny</em>. Chapman and Hall/CRC, 2022. <a href="https://unleash-shiny.rinterface.com/" class="uri">https://unleash-shiny.rinterface.com/</a></p>
+<p>Coene, John. <em>JavaScript for R</em>. Chapman and Hall/CRC, 2021. <a href="https://javascript-for-r.com/" class="uri">https://javascript-for-r.com/</a></p>
+</section>
+<section id="additional-resources-for-participants" class="level3">
+<h3 class="anchored" data-anchor-id="additional-resources-for-participants">Additional Resources for Participants</h3>
+<p>Wickham, Hadley. <em>Mastering Shiny: Build Interactive Apps, Reports, and Dashboards Powered by R</em>. O’Reilly Media, 2021. <a href="https://mastering-shiny.org/" class="uri">https://mastering-shiny.org/</a></p>
+<p>Fay, Colin, Sébastien Rochette, Vincent Guyader, and Cervan Girard. <em>Engineering Production-Grade Shiny Apps</em>. Chapman and Hall/CRC, 2021. <a href="https://engineering-shiny.org/" class="uri">https://engineering-shiny.org/</a></p>
+<p>htmlwidgets documentation. “Creating a Widget.” 2024. <a href="https://www.htmlwidgets.org/develop_intro.html" class="uri">https://www.htmlwidgets.org/develop_intro.html</a></p>
+<p>Posit Software, PBC. “Shiny Bindings: JavaScript Packages for Custom Bindings.” GitHub, 2024. <a href="https://github.com/posit-dev/shiny-bindings" class="uri">https://github.com/posit-dev/shiny-bindings</a></p>
+</section>
+<section id="package-documentation" class="level3">
+<h3 class="anchored" data-anchor-id="package-documentation">Package Documentation</h3>
+<p>shinyWidgets: Custom Inputs Widgets for Shiny. Perrier, Victor, Fanny Meyer, and David Granjon. <a href="https://CRAN.R-project.org/package=shinyWidgets" class="uri">https://CRAN.R-project.org/package=shinyWidgets</a></p>
+<p>shinyjs: Easily Improve the User Experience of Your Shiny Apps in Seconds. Attali, Dean. <a href="https://CRAN.R-project.org/package=shinyjs" class="uri">https://CRAN.R-project.org/package=shinyjs</a></p>
+<p>htmlwidgets: HTML Widgets for R. Vaidyanathan, Ramnath, et al.&nbsp;<a href="https://CRAN.R-project.org/package=htmlwidgets" class="uri">https://CRAN.R-project.org/package=htmlwidgets</a></p>
+<hr>
+</section>
+</section>
+<section id="bibtex-citations" class="level2">
+<h2 class="anchored" data-anchor-id="bibtex-citations">BibTeX Citations</h2>
+<p>For use with pandoc or quarto when producing formal documentation:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="va">@online</span>{<span class="ot">posit2024custominput</span>,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span> = {{Posit Software, PBC}},</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span> = {How to Create Custom Input Bindings},</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span> = {2024},</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">url</span> = {https://shiny.posit.co/r/articles/build/js-custom-input/},</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">note</span> = {Accessed: 2025-11-26}</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="va">@online</span>{<span class="ot">posit2024buildingoutputs</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span> = {{Posit Software, PBC}},</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span> = {Build Custom Output Objects},</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span> = {2024},</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">url</span> = {https://shiny.posit.co/r/articles/build/building-outputs/},</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">note</span> = {Accessed: 2025-11-26}</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="va">@online</span>{<span class="ot">posit2024communicatingjs</span>,</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span> = {{Posit Software, PBC}},</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span> = {Communicating with Shiny via JavaScript},</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span> = {2024},</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  <span class="dt">url</span> = {https://shiny.posit.co/r/articles/build/communicating-with-js/},</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>  <span class="dt">note</span> = {Accessed: 2025-11-26}</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="va">@book</span>{<span class="ot">granjon2022outstanding</span>,</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span> = {Granjon, David},</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span> = {Outstanding User Interfaces with Shiny},</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span> = {2022},</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>  <span class="dt">publisher</span> = {Chapman and Hall/CRC},</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>  <span class="dt">series</span> = {The R Series},</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>  <span class="dt">isbn</span> = {978-0-367-64365-2},</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>  <span class="dt">doi</span> = {10.1201/9781003124924},</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>  <span class="dt">url</span> = {https://unleash-shiny.rinterface.com/},</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>  <span class="dt">note</span> = {Accessed: 2025-11-26}</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="va">@book</span>{<span class="ot">coene2021javascript</span>,</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span> = {Coene, John},</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span> = {JavaScript for R},</span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span> = {2021},</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>  <span class="dt">publisher</span> = {Chapman and Hall/CRC},</span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>  <span class="dt">series</span> = {The R Series},</span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>  <span class="dt">isbn</span> = {978-0-367-68063-3},</span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>  <span class="dt">url</span> = {https://javascript-for-r.com/},</span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>  <span class="dt">note</span> = {Accessed: 2025-11-26}</span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a><span class="va">@book</span>{<span class="ot">wickham2021mastering</span>,</span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span> = {Wickham, Hadley},</span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span> = {Mastering Shiny: Build Interactive Apps, Reports, and Dashboards Powered by R},</span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span> = {2021},</span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>  <span class="dt">publisher</span> = {O'Reilly Media},</span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>  <span class="dt">isbn</span> = {978-1-492-04738-4},</span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>  <span class="dt">url</span> = {https://mastering-shiny.org/},</span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>  <span class="dt">note</span> = {Accessed: 2025-11-26}</span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a><span class="va">@book</span>{<span class="ot">fay2021engineering</span>,</span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span> = {Fay, Colin and Rochette, Sébastien and Guyader, Vincent and Girard, Cervan},</span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span> = {Engineering Production-Grade Shiny Apps},</span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span> = {2021},</span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>  <span class="dt">publisher</span> = {Chapman and Hall/CRC},</span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>  <span class="dt">series</span> = {The R Series},</span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>  <span class="dt">isbn</span> = {978-0-367-46602-2},</span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>  <span class="dt">doi</span> = {10.1201/9781003029878},</span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>  <span class="dt">url</span> = {https://engineering-shiny.org/},</span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a>  <span class="dt">note</span> = {Accessed: 2025-11-26}</span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a><span class="va">@manual</span>{<span class="ot">htmlwidgets2024</span>,</span>
+<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span> = {htmlwidgets: HTML Widgets for R},</span>
+<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span> = {Vaidyanathan, Ramnath and Xie, Yihui and Allaire, JJ and Cheng, Joe and Sievert, Carson and Russell, Kenton},</span>
+<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span> = {2024},</span>
+<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a>  <span class="dt">note</span> = {R package version 1.6.4},</span>
+<span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a>  <span class="dt">url</span> = {https://CRAN.R-project.org/package=htmlwidgets}</span>
+<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a><span class="va">@online</span>{<span class="ot">htmlwidgets_develop</span>,</span>
+<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span> = {Vaidyanathan, Ramnath and Xie, Yihui and Allaire, JJ and Cheng, Joe and Sievert, Carson},</span>
+<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span> = {Creating a Widget},</span>
+<span id="cb10-81"><a href="#cb10-81" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span> = {2024},</span>
+<span id="cb10-82"><a href="#cb10-82" aria-hidden="true" tabindex="-1"></a>  <span class="dt">url</span> = {https://www.htmlwidgets.org/develop_intro.html},</span>
+<span id="cb10-83"><a href="#cb10-83" aria-hidden="true" tabindex="-1"></a>  <span class="dt">note</span> = {Accessed: 2025-11-26}</span>
+<span id="cb10-84"><a href="#cb10-84" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-85"><a href="#cb10-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-86"><a href="#cb10-86" aria-hidden="true" tabindex="-1"></a><span class="va">@manual</span>{<span class="ot">shinyWidgets2024</span>,</span>
+<span id="cb10-87"><a href="#cb10-87" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span> = {shinyWidgets: Custom Inputs Widgets for Shiny},</span>
+<span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span> = {Perrier, Victor and Meyer, Fanny and Granjon, David},</span>
+<span id="cb10-89"><a href="#cb10-89" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span> = {2024},</span>
+<span id="cb10-90"><a href="#cb10-90" aria-hidden="true" tabindex="-1"></a>  <span class="dt">note</span> = {R package version 0.8.7},</span>
+<span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a>  <span class="dt">url</span> = {https://CRAN.R-project.org/package=shinyWidgets}</span>
+<span id="cb10-92"><a href="#cb10-92" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-93"><a href="#cb10-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-94"><a href="#cb10-94" aria-hidden="true" tabindex="-1"></a><span class="va">@manual</span>{<span class="ot">shinyjs2024</span>,</span>
+<span id="cb10-95"><a href="#cb10-95" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span> = {shinyjs: Easily Improve the User Experience of Your Shiny Apps in Seconds},</span>
+<span id="cb10-96"><a href="#cb10-96" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span> = {Attali, Dean},</span>
+<span id="cb10-97"><a href="#cb10-97" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span> = {2024},</span>
+<span id="cb10-98"><a href="#cb10-98" aria-hidden="true" tabindex="-1"></a>  <span class="dt">url</span> = {https://CRAN.R-project.org/package=shinyjs}</span>
+<span id="cb10-99"><a href="#cb10-99" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-100"><a href="#cb10-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-101"><a href="#cb10-101" aria-hidden="true" tabindex="-1"></a><span class="va">@misc</span>{<span class="ot">shinybindings_github</span>,</span>
+<span id="cb10-102"><a href="#cb10-102" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span> = {{Posit Software, PBC}},</span>
+<span id="cb10-103"><a href="#cb10-103" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span> = {Shiny Bindings: JavaScript Packages for Custom Bindings},</span>
+<span id="cb10-104"><a href="#cb10-104" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span> = {2024},</span>
+<span id="cb10-105"><a href="#cb10-105" aria-hidden="true" tabindex="-1"></a>  <span class="dt">publisher</span> = {GitHub},</span>
+<span id="cb10-106"><a href="#cb10-106" aria-hidden="true" tabindex="-1"></a>  <span class="dt">url</span> = {https://github.com/posit-dev/shiny-bindings},</span>
+<span id="cb10-107"><a href="#cb10-107" aria-hidden="true" tabindex="-1"></a>  <span class="dt">note</span> = {Accessed: 2025-11-26}</span>
+<span id="cb10-108"><a href="#cb10-108" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/calderonsamuel\.github\.io\/workshop-custom-shiny\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

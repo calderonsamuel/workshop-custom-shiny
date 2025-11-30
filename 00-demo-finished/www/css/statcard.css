@@ -1,0 +1,52 @@
+/* Stat Card Output Styles */
+
+.stat-card {
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.stat-title {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: #333;
+}
+
+/* Status-based color variations */
+.stat-card.status-good {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border-left: 4px solid #28a745;
+}
+
+.stat-card.status-good .stat-value {
+  color: #155724;
+}
+
+.stat-card.status-warning {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  border-left: 4px solid #ffc107;
+}
+
+.stat-card.status-warning .stat-value {
+  color: #856404;
+}
+
+.stat-card.status-bad {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  border-left: 4px solid #dc3545;
+}
+
+.stat-card.status-bad .stat-value {
+  color: #721c24;
+}

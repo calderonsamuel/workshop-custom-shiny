@@ -2,6 +2,7 @@
 # This app demonstrates both the tri-state toggle input and stat card output
 
 library(shiny)
+library(bslib)
 library(dplyr)
 
 # Source our custom components
@@ -31,57 +32,63 @@ tasks <- data.frame(
 )
 
 # UI
-ui <- fluidPage(
-  titlePanel("Custom Shiny Bindings Demo"),
+ui <- page_fluid(
+  theme = bs_theme(version = 5, bootswatch = "flatly"),
 
-  fluidRow(
-    column(
-      width = 6,
-      h3("Custom Input: Tri-State Toggle"),
-      p("Click the buttons to filter tasks by status."),
+  h2("Custom Shiny Bindings Demo"),
 
-      triStateInput(
-        inputId = "task_filter",
-        label = "Show tasks:",
-        choices = c("All" = "all", "Active" = "active", "Completed" = "completed"),
-        selected = "all"
-      ),
+  layout_columns(
+    col_widths = c(6, 6),
 
-      hr(),
+    card(
+      card_header("Custom Input: Tri-State Toggle"),
+      card_body(
+        p("Click the buttons to filter tasks by status."),
 
-      h4("Filtered Tasks:"),
-      tableOutput("task_table"),
+        triStateInput(
+          inputId = "task_filter",
+          label = "Show tasks:",
+          choices = c("All" = "all", "Active" = "active", "Completed" = "completed"),
+          selected = "all"
+        ),
 
-      hr(),
+        hr(),
 
-      h4("Current filter value (from R):"),
-      verbatimTextOutput("filter_value"),
+        h5("Filtered Tasks:"),
+        tableOutput("task_table"),
 
-      actionButton("reset_filter", "Reset to 'All'")
+        hr(),
+
+        h5("Current filter value (from R):"),
+        verbatimTextOutput("filter_value"),
+
+        actionButton("reset_filter", "Reset to 'All'", class = "btn-secondary")
+      )
     ),
 
-    column(
-      width = 6,
-      h3("Custom Output: Stat Card"),
-      p("Move the slider to see the card change color based on thresholds."),
+    card(
+      card_header("Custom Output: Stat Card"),
+      card_body(
+        p("Move the slider to see the card change color based on thresholds."),
 
-      sliderInput(
-        inputId = "metric_slider",
-        label = "Performance Score:",
-        min = 0,
-        max = 100,
-        value = 75
-      ),
+        sliderInput(
+          inputId = "metric_slider",
+          label = "Performance Score:",
+          min = 0,
+          max = 100,
+          value = 75
+        ),
 
-      statCardOutput("kpi_card", width = "250px"),
+        statCardOutput("kpi_card", width = "250px"),
 
-      hr(),
+        hr(),
 
-      h4("Thresholds:"),
-      tags$ul(
-        tags$li(tags$span(style = "color: #28a745;", "Green (Good):"), " 80-100"),
-        tags$li(tags$span(style = "color: #ffc107;", "Yellow (Warning):"), " 50-79"),
-        tags$li(tags$span(style = "color: #dc3545;", "Red (Bad):"), " 0-49")
+        h5("Thresholds:"),
+        tags$ul(
+          tags$li(tags$span(class = "text-success", "Green (Good):"), " 80-100"),
+          tags$li(tags$span(class = "text-warning", "Yellow (Warning):"), " 50-79"),
+          tags$li(tags$span(class = "text-danger", "Red (Bad):"), " 0-49")
+        )
       )
     )
   )

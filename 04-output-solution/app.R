@@ -2,42 +2,42 @@
 # =============================================
 
 library(shiny)
+library(bslib)
 library(dplyr)
 
 # Source our custom component
 source("R/statCard.R")
 
 # UI
-ui <- fluidPage(
-  titlePanel("Exercise 2: Stat Card Output (Solution)"),
+ui <- page_sidebar(
+  theme = bs_theme(version = 5, bootswatch = "flatly"),
+  title = "Exercise 2: Stat Card Output (Solution)",
 
-  sidebarLayout(
-    sidebarPanel(
-      h4("This is the working solution!"),
-      hr(),
+  sidebar = sidebar(
+    title = "This is the working solution!",
+    hr(),
 
-      sliderInput(
-        inputId = "metric_slider",
-        label = "Performance Score:",
-        min = 0,
-        max = 100,
-        value = 75
-      ),
-
-      hr(),
-
-      h5("Thresholds:"),
-      tags$ul(
-        tags$li(tags$span(style = "color: #28a745;", "Green (good):"), " 80-100"),
-        tags$li(tags$span(style = "color: #ffc107;", "Yellow (warning):"), " 50-79"),
-        tags$li(tags$span(style = "color: #dc3545;", "Red (bad):"), " 0-49")
-      )
+    sliderInput(
+      inputId = "metric_slider",
+      label = "Performance Score:",
+      min = 0,
+      max = 100,
+      value = 75
     ),
 
-    mainPanel(
-      h4("Stat Card Output"),
-      statCardOutput("kpi_card", width = "250px")
+    hr(),
+
+    h6("Thresholds:"),
+    tags$ul(
+      tags$li(tags$span(class = "text-success", "Green (good):"), " 80-100"),
+      tags$li(tags$span(class = "text-warning", "Yellow (warning):"), " 50-79"),
+      tags$li(tags$span(class = "text-danger", "Red (bad):"), " 0-49")
     )
+  ),
+
+  card(
+    card_header("Stat Card Output"),
+    card_body(statCardOutput("kpi_card", width = "250px"))
   )
 )
 

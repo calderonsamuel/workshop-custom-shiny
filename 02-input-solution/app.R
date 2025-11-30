@@ -2,6 +2,7 @@
 # ============================================
 
 library(shiny)
+library(bslib)
 library(dplyr)
 
 # Source our custom component
@@ -30,30 +31,29 @@ tasks <- data.frame(
 )
 
 # UI
-ui <- fluidPage(
-  titlePanel("Exercise 1: Tri-State Toggle Input (Solution)"),
+ui <- page_sidebar(
+  theme = bs_theme(version = 5, bootswatch = "flatly"),
+  title = "Exercise 1: Tri-State Toggle Input (Solution)",
 
-  sidebarLayout(
-    sidebarPanel(
-      h4("This is the working solution!"),
-      hr(),
-      triStateInput(
-        inputId = "task_filter",
-        label = "Filter tasks:",
-        choices = c("All" = "all", "Active" = "active", "Completed" = "completed"),
-        selected = "all"
-      ),
-      hr(),
-      h5("Current value from R:"),
-      verbatimTextOutput("filter_value"),
-      hr(),
-      actionButton("reset_filter", "Reset to 'All'")
+  sidebar = sidebar(
+    title = "This is the working solution!",
+    hr(),
+    triStateInput(
+      inputId = "task_filter",
+      label = "Filter tasks:",
+      choices = c("All" = "all", "Active" = "active", "Completed" = "completed"),
+      selected = "all"
     ),
+    hr(),
+    h6("Current value from R:"),
+    verbatimTextOutput("filter_value"),
+    hr(),
+    actionButton("reset_filter", "Reset to 'All'", class = "btn-secondary")
+  ),
 
-    mainPanel(
-      h4("Filtered Tasks"),
-      tableOutput("task_table")
-    )
+  card(
+    card_header("Filtered Tasks"),
+    card_body(tableOutput("task_table"))
   )
 )
 

@@ -7,6 +7,7 @@
 # Open www/js/tristate.js and follow the instructions there.
 
 library(shiny)
+library(bslib)
 library(dplyr)
 
 # Source our custom component
@@ -35,54 +36,54 @@ tasks <- data.frame(
 )
 
 # UI
-ui <- fluidPage(
-  titlePanel("Exercise 1: Tri-State Toggle Input"),
+ui <- page_sidebar(
+  theme = bs_theme(version = 5, bootswatch = "flatly"),
+  title = "Exercise 1: Tri-State Toggle Input",
 
-  sidebarLayout(
-    sidebarPanel(
-      h4("Instructions"),
-      p("Complete the JavaScript binding in", code("www/js/tristate.js")),
-      p("When working, the toggle below should:"),
-      tags$ul(
-        tags$li("Update when you click each option"),
-        tags$li("Filter the task table"),
-        tags$li("Show the current value in the debug box")
-      ),
-      hr(),
-      triStateInput(
-        inputId = "task_filter",
-        label = "Filter tasks:",
-        choices = c("All" = "all", "Active" = "active", "Completed" = "completed"),
-        selected = "all"
-      ),
-      hr(),
-      h5("Debug: Current value from R"),
-      verbatimTextOutput("filter_value"),
-      hr(),
-      actionButton("reset_filter", "Reset to 'All'"),
-      p(class = "text-muted", style = "margin-top: 10px;",
-        "This button tests updateTriStateInput()")
+  sidebar = sidebar(
+    title = "Instructions",
+    p("Complete the JavaScript binding in", code("www/js/tristate.js")),
+    p("When working, the toggle below should:"),
+    tags$ul(
+      tags$li("Update when you click each option"),
+      tags$li("Filter the task table"),
+      tags$li("Show the current value in the debug box")
     ),
+    hr(),
+    triStateInput(
+      inputId = "task_filter",
+      label = "Filter tasks:",
+      choices = c("All" = "all", "Active" = "active", "Completed" = "completed"),
+      selected = "all"
+    ),
+    hr(),
+    h6("Debug: Current value from R"),
+    verbatimTextOutput("filter_value"),
+    hr(),
+    actionButton("reset_filter", "Reset to 'All'", class = "btn-secondary"),
+    p(class = "text-muted mt-2", "This button tests updateTriStateInput()")
+  ),
 
-    mainPanel(
-      h4("Filtered Tasks"),
-      tableOutput("task_table"),
-      hr(),
-      h5("Progress Checklist"),
-      tags$div(
-        class = "well",
-        tags$p(tags$strong("After implementing find() and getValue():")),
-        tags$ul(
-          tags$li("The 'Current value' box should show 'all' (not NULL)")
-        ),
-        tags$p(tags$strong("After implementing subscribe():")),
-        tags$ul(
-          tags$li("Clicking options should update the value and filter the table")
-        ),
-        tags$p(tags$strong("After implementing setValue() and receiveMessage():")),
-        tags$ul(
-          tags$li("The 'Reset to All' button should work")
-        )
+  card(
+    card_header("Filtered Tasks"),
+    card_body(tableOutput("task_table"))
+  ),
+
+  card(
+    card_header("Progress Checklist"),
+    card_body(
+      class = "bg-light",
+      tags$p(tags$strong("After implementing find() and getValue():")),
+      tags$ul(
+        tags$li("The 'Current value' box should show 'all' (not NULL)")
+      ),
+      tags$p(tags$strong("After implementing subscribe():")),
+      tags$ul(
+        tags$li("Clicking options should update the value and filter the table")
+      ),
+      tags$p(tags$strong("After implementing setValue() and receiveMessage():")),
+      tags$ul(
+        tags$li("The 'Reset to All' button should work")
       )
     )
   )

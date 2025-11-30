@@ -7,70 +7,70 @@
 # Open www/js/statcard.js and follow the instructions there.
 
 library(shiny)
+library(bslib)
 library(dplyr)
 
 # Source our custom component
 source("R/statCard.R")
 
 # UI
-ui <- fluidPage(
-  titlePanel("Exercise 2: Stat Card Output"),
+ui <- page_sidebar(
+  theme = bs_theme(version = 5, bootswatch = "flatly"),
+  title = "Exercise 2: Stat Card Output",
 
-  sidebarLayout(
-    sidebarPanel(
-      h4("Instructions"),
-      p("Complete the JavaScript binding in", code("www/js/statcard.js")),
-      p("When working, the stat card should:"),
-      tags$ul(
-        tags$li("Display the title and value"),
-        tags$li("Change color based on the score threshold")
-      ),
-      hr(),
+  sidebar = sidebar(
+    title = "Instructions",
+    p("Complete the JavaScript binding in", code("www/js/statcard.js")),
+    p("When working, the stat card should:"),
+    tags$ul(
+      tags$li("Display the title and value"),
+      tags$li("Change color based on the score threshold")
+    ),
+    hr(),
 
-      sliderInput(
-        inputId = "metric_slider",
-        label = "Performance Score:",
-        min = 0,
-        max = 100,
-        value = 75
-      ),
-
-      hr(),
-
-      h5("Thresholds:"),
-      tags$ul(
-        tags$li(tags$span(style = "color: #28a745;", "Green (good):"), " 80-100"),
-        tags$li(tags$span(style = "color: #ffc107;", "Yellow (warning):"), " 50-79"),
-        tags$li(tags$span(style = "color: #dc3545;", "Red (bad):"), " 0-49")
-      )
+    sliderInput(
+      inputId = "metric_slider",
+      label = "Performance Score:",
+      min = 0,
+      max = 100,
+      value = 75
     ),
 
-    mainPanel(
-      h4("Stat Card Output"),
-      statCardOutput("kpi_card", width = "250px"),
+    hr(),
 
-      hr(),
-
-      h5("Progress Checklist"),
-      tags$div(
-        class = "well",
-        tags$p(tags$strong("After implementing find():")),
-        tags$ul(
-          tags$li("No JavaScript errors in console")
-        ),
-        tags$p(tags$strong("After implementing renderValue():")),
-        tags$ul(
-          tags$li("Card shows the title and value"),
-          tags$li("Moving the slider updates the card"),
-          tags$li("Card color changes based on thresholds")
-        )
-      ),
-
-      hr(),
-
-      h5("Debug: Data being sent to JavaScript"),
-      verbatimTextOutput("debug_output")
+    h6("Thresholds:"),
+    tags$ul(
+      tags$li(tags$span(class = "text-success", "Green (good):"), " 80-100"),
+      tags$li(tags$span(class = "text-warning", "Yellow (warning):"), " 50-79"),
+      tags$li(tags$span(class = "text-danger", "Red (bad):"), " 0-49")
     )
+  ),
+
+  card(
+    card_header("Stat Card Output"),
+    card_body(statCardOutput("kpi_card", width = "250px"))
+  ),
+
+  card(
+    card_header("Progress Checklist"),
+    card_body(
+      class = "bg-light",
+      tags$p(tags$strong("After implementing find():")),
+      tags$ul(
+        tags$li("No JavaScript errors in console")
+      ),
+      tags$p(tags$strong("After implementing renderValue():")),
+      tags$ul(
+        tags$li("Card shows the title and value"),
+        tags$li("Moving the slider updates the card"),
+        tags$li("Card color changes based on thresholds")
+      )
+    )
+  ),
+
+  card(
+    card_header("Debug: Data being sent to JavaScript"),
+    card_body(verbatimTextOutput("debug_output"))
   )
 )
 

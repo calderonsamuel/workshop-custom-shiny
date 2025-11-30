@@ -1,0 +1,57 @@
+/* Tri-State Input Styles
+ * This file is COMPLETE - you don't need to modify it.
+ * Focus on completing the JavaScript binding in www/js/tristate.js
+ */
+
+.tri-state-input {
+  margin-bottom: 15px;
+}
+
+.tri-state-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.tri-state-options {
+  display: inline-flex;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tri-state-option {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  color: #555;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-right: none;
+}
+
+.tri-state-option:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+.tri-state-option:last-child {
+  border-radius: 0 6px 6px 0;
+  border-right: 1px solid #ddd;
+}
+
+.tri-state-option:hover:not(.active) {
+  background-color: #f5f5f5;
+}
+
+.tri-state-option.active {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: #fff;
+}
+
+.tri-state-option:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}

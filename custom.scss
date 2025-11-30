@@ -109,6 +109,7 @@ $code-block-bg: #f8f9fa;
 
 // Columns layout improvements
 .reveal .columns {
+  display: flex !important;
   gap: 2em;
 }
 

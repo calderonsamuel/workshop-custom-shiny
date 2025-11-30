@@ -187,6 +187,10 @@
       margin-right: 0; 
     }
   </style>
+  <meta name="mermaid-theme" content="neutral">
+  <script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+  <script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+  <link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -315,29 +319,30 @@ LatinR 2025
 </section>
 <section id="el-flujo-de-comunicación" class="slide level2">
 <h2>El Flujo de Comunicación</h2>
-<div class="columns">
-<div class="column" style="width:40%;">
-<h3 id="navegador-js">Navegador (JS)</h3>
-<ol type="1">
-<li>Usuario hace clic</li>
-<li><strong>Input Binding</strong> captura el evento</li>
-<li>Envía valor via WebSocket →</li>
-<li>← Recibe datos via WebSocket</li>
-<li><strong>Output Binding</strong> actualiza DOM</li>
-</ol>
-</div><div class="column" style="width:20%;">
-<p><br><br><br></p>
-<p><strong>⟷ WebSocket ⟷</strong></p>
-<p>Conexión bidireccional persistente</p>
-</div><div class="column" style="width:40%;">
-<h3 id="servidor-r">Servidor (R)</h3>
-<ol type="1">
-<li>Recibe <code>input$x</code></li>
-<li>Ejecuta lógica reactiva</li>
-<li>Genera <code>output$y</code></li>
-<li>Envía resultado al navegador</li>
-</ol>
-</div></div>
+<div class="cell" data-reveal="true" data-eval="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    subgraph Browser["🌐 Navegador (JavaScript)"]
+        A[Usuario hace clic] --&gt; B[Input Binding]
+        G[Output Binding] --&gt; H[DOM actualizado]
+    end
+
+    subgraph Server["🖥️ Servidor (R)"]
+        C["input$x"] --&gt; D[Lógica reactiva]
+        D --&gt; E["output$y"]
+    end
+
+    B --&gt;|WebSocket| C
+    E --&gt;|WebSocket| G
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
 </section>
 <section id="dos-registros-centrales" class="slide level2">
 <h2>Dos Registros Centrales</h2>
@@ -1199,12 +1204,12 @@ LatinR 2025
         backgroundTransition: 'none',
 
         // Number of slides away from the current that are visible
-        viewDistance: 3,
+        viewDistance: 50,
 
         // Number of slides away from the current that are visible on mobile
         // devices. It is advisable to set this to a lower number than
         // viewDistance in order to save resources.
-        mobileViewDistance: 2,
+        mobileViewDistance: 50,
 
         // The "normal" size of the presentation, aspect ratio will be preserved
         // when the presentation is scaled to fit different resolutions. Can be

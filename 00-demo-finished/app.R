@@ -1,32 +1,32 @@
-# Demo App: Custom Shiny Inputs and Outputs
-# This app demonstrates both the tri-state toggle input and stat card output
+# App Demo: Inputs y Outputs Personalizados de Shiny
+# Esta app demuestra tanto el input tri-state toggle como el output stat card
 
 library(shiny)
 library(bslib)
 library(dplyr)
 
-# Source our custom components
+# Cargar nuestros componentes personalizados
 source("R/triStateInput.R")
 source("R/statCard.R")
 
-# Sample data for the demo
-tasks <- data.frame(
+# Datos de ejemplo para la demo
+tareas <- data.frame(
   id = 1:10,
-  task = c(
-    "Review pull request",
-    "Write documentation",
-    "Fix login bug",
-    "Update dependencies",
-    "Design new feature",
-    "Code review",
-    "Deploy to staging",
-    "Write unit tests",
-    "Refactor API",
-    "Update README"
+  tarea = c(
+    "Revisar pull request",
+    "Escribir documentación",
+    "Corregir bug de login",
+    "Actualizar dependencias",
+    "Diseñar nueva funcionalidad",
+    "Revisión de código",
+    "Desplegar a staging",
+    "Escribir tests unitarios",
+    "Refactorizar API",
+    "Actualizar README"
   ),
-  status = c(
-    "completed", "active", "active", "completed", "active",
-    "completed", "completed", "active", "completed", "active"
+  estado = c(
+    "completada", "activa", "activa", "completada", "activa",
+    "completada", "completada", "activa", "completada", "activa"
   ),
   stringsAsFactors = FALSE
 )
@@ -35,45 +35,45 @@ tasks <- data.frame(
 ui <- page_fluid(
   theme = bs_theme(version = 5, bootswatch = "flatly"),
 
-  h2("Custom Shiny Bindings Demo"),
+  h2("Demo de Bindings Personalizados en Shiny"),
 
   layout_columns(
     col_widths = c(6, 6),
 
     card(
-      card_header("Custom Input: Tri-State Toggle"),
+      card_header("Input Personalizado: Toggle Tri-Estado"),
       card_body(
-        p("Click the buttons to filter tasks by status."),
+        p("Haz clic en los botones para filtrar tareas por estado."),
 
         triStateInput(
           inputId = "task_filter",
-          label = "Show tasks:",
-          choices = c("All" = "all", "Active" = "active", "Completed" = "completed"),
+          label = "Mostrar tareas:",
+          choices = c("Todas" = "all", "Activas" = "activa", "Completadas" = "completada"),
           selected = "all"
         ),
 
         hr(),
 
-        h5("Filtered Tasks:"),
+        h5("Tareas Filtradas:"),
         tableOutput("task_table"),
 
         hr(),
 
-        h5("Current filter value (from R):"),
+        h5("Valor actual del filtro (desde R):"),
         verbatimTextOutput("filter_value"),
 
-        actionButton("reset_filter", "Reset to 'All'", class = "btn-secondary")
+        actionButton("reset_filter", "Restablecer a 'Todas'", class = "btn-secondary")
       )
     ),
 
     card(
-      card_header("Custom Output: Stat Card"),
+      card_header("Output Personalizado: Tarjeta de Estadísticas"),
       card_body(
-        p("Move the slider to see the card change color based on thresholds."),
+        p("Mueve el slider para ver cómo cambia el color de la tarjeta según los umbrales."),
 
         sliderInput(
           inputId = "metric_slider",
-          label = "Performance Score:",
+          label = "Puntuación de Rendimiento:",
           min = 0,
           max = 100,
           value = 75
@@ -83,11 +83,11 @@ ui <- page_fluid(
 
         hr(),
 
-        h5("Thresholds:"),
+        h5("Umbrales:"),
         tags$ul(
-          tags$li(tags$span(class = "text-success", "Green (Good):"), " 80-100"),
-          tags$li(tags$span(class = "text-warning", "Yellow (Warning):"), " 50-79"),
-          tags$li(tags$span(class = "text-danger", "Red (Bad):"), " 0-49")
+          tags$li(tags$span(class = "text-success", "Verde (Bueno):"), " 80-100"),
+          tags$li(tags$span(class = "text-warning", "Amarillo (Advertencia):"), " 50-79"),
+          tags$li(tags$span(class = "text-danger", "Rojo (Malo):"), " 0-49")
         )
       )
     )
@@ -96,34 +96,35 @@ ui <- page_fluid(
 
 # Server
 server <- function(input, output, session) {
-  # Filter tasks based on the tri-state input
-  filtered_tasks <- reactive({
+  # Filtrar tareas según el input tri-state
+
+filtered_tasks <- reactive({
     filter_val <- input$task_filter
 
     if (is.null(filter_val) || filter_val == "all") {
-      tasks
+      tareas
     } else {
-      tasks %>% filter(status == filter_val)
+      tareas %>% filter(estado == filter_val)
     }
   })
 
-  # Render the filtered task table
+  # Renderizar la tabla de tareas filtradas
   output$task_table <- renderTable({
     filtered_tasks() %>%
-      select(Task = task, Status = status)
+      select(Tarea = tarea, Estado = estado)
   })
 
-  # Show the current filter value
+  # Mostrar el valor actual del filtro
   output$filter_value <- renderPrint({
     input$task_filter
   })
 
-  # Reset button handler
+  # Manejador del botón de restablecer
   observeEvent(input$reset_filter, {
     updateTriStateInput(session, "task_filter", "all")
   })
 
-  # Render the stat card with conditional styling
+  # Renderizar la tarjeta de estadísticas con estilos condicionales
   output$kpi_card <- renderStatCard({
     value <- input$metric_slider
 
@@ -134,12 +135,12 @@ server <- function(input, output, session) {
     )
 
     list(
-      title = "Performance Score",
+      title = "Puntuación de Rendimiento",
       value = value,
       status = status
     )
   })
 }
 
-# Run the app
+# Ejecutar la app
 shinyApp(ui = ui, server = server)

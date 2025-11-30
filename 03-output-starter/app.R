@@ -1,36 +1,36 @@
-# Exercise 2: Custom Output Binding - Stat Card
-# ==============================================
+# Ejercicio 2: Output Binding Personalizado - Tarjeta de Estadísticas
+# ====================================================================
 #
-# YOUR TASK: Complete the JavaScript binding in www/js/statcard.js
+# TU TAREA: Completa el binding de JavaScript en www/js/statcard.js
 #
-# This app won't work until you implement the binding methods!
-# Open www/js/statcard.js and follow the instructions there.
+# ¡Esta app no funcionará hasta que implementes los métodos del binding!
+# Abre www/js/statcard.js y sigue las instrucciones allí.
 
 library(shiny)
 library(bslib)
 library(dplyr)
 
-# Source our custom component
+# Cargar nuestro componente personalizado
 source("R/statCard.R")
 
 # UI
 ui <- page_sidebar(
   theme = bs_theme(version = 5, bootswatch = "flatly"),
-  title = "Exercise 2: Stat Card Output",
+  title = "Ejercicio 2: Output Tarjeta de Estadísticas",
 
   sidebar = sidebar(
-    title = "Instructions",
-    p("Complete the JavaScript binding in", code("www/js/statcard.js")),
-    p("When working, the stat card should:"),
+    title = "Instrucciones",
+    p("Completa el binding de JavaScript en", code("www/js/statcard.js")),
+    p("Cuando funcione, la tarjeta debería:"),
     tags$ul(
-      tags$li("Display the title and value"),
-      tags$li("Change color based on the score threshold")
+      tags$li("Mostrar el título y el valor"),
+      tags$li("Cambiar de color según el umbral de puntuación")
     ),
     hr(),
 
     sliderInput(
       inputId = "metric_slider",
-      label = "Performance Score:",
+      label = "Puntuación de Rendimiento:",
       min = 0,
       max = 100,
       value = 75
@@ -38,45 +38,45 @@ ui <- page_sidebar(
 
     hr(),
 
-    h6("Thresholds:"),
+    h6("Umbrales:"),
     tags$ul(
-      tags$li(tags$span(class = "text-success", "Green (good):"), " 80-100"),
-      tags$li(tags$span(class = "text-warning", "Yellow (warning):"), " 50-79"),
-      tags$li(tags$span(class = "text-danger", "Red (bad):"), " 0-49")
+      tags$li(tags$span(class = "text-success", "Verde (bueno):"), " 80-100"),
+      tags$li(tags$span(class = "text-warning", "Amarillo (advertencia):"), " 50-79"),
+      tags$li(tags$span(class = "text-danger", "Rojo (malo):"), " 0-49")
     )
   ),
 
   card(
-    card_header("Stat Card Output"),
+    card_header("Output Tarjeta de Estadísticas"),
     card_body(statCardOutput("kpi_card", width = "250px"))
   ),
 
   card(
-    card_header("Progress Checklist"),
+    card_header("Lista de Progreso"),
     card_body(
       class = "bg-light",
-      tags$p(tags$strong("After implementing find():")),
+      tags$p(tags$strong("Después de implementar find():")),
       tags$ul(
-        tags$li("No JavaScript errors in console")
+        tags$li("Sin errores de JavaScript en la consola")
       ),
-      tags$p(tags$strong("After implementing renderValue():")),
+      tags$p(tags$strong("Después de implementar renderValue():")),
       tags$ul(
-        tags$li("Card shows the title and value"),
-        tags$li("Moving the slider updates the card"),
-        tags$li("Card color changes based on thresholds")
+        tags$li("La tarjeta muestra el título y el valor"),
+        tags$li("Al mover el slider se actualiza la tarjeta"),
+        tags$li("El color de la tarjeta cambia según los umbrales")
       )
     )
   ),
 
   card(
-    card_header("Debug: Data being sent to JavaScript"),
+    card_header("Debug: Datos enviados a JavaScript"),
     card_body(verbatimTextOutput("debug_output"))
   )
 )
 
 # Server
 server <- function(input, output, session) {
-  # Compute the card data reactively
+  # Calcular los datos de la tarjeta de forma reactiva
   card_data <- reactive({
     value <- input$metric_slider
 
@@ -87,22 +87,22 @@ server <- function(input, output, session) {
     )
 
     list(
-      title = "Performance Score",
+      title = "Puntuación de Rendimiento",
       value = value,
       status = status
     )
   })
 
-  # Render the stat card
+  # Renderizar la tarjeta de estadísticas
   output$kpi_card <- renderStatCard({
     card_data()
   })
 
-  # Debug output to show what data is being sent
+  # Output de debug para mostrar qué datos se están enviando
   output$debug_output <- renderPrint({
     card_data()
   })
 }
 
-# Run the app
+# Ejecutar la app
 shinyApp(ui = ui, server = server)

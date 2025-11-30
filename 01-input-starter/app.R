@@ -1,36 +1,36 @@
-# Exercise 1: Custom Input Binding - Tri-State Toggle
-# ====================================================
+# Ejercicio 1: Input Binding Personalizado - Toggle Tri-Estado
+# =============================================================
 #
-# YOUR TASK: Complete the JavaScript binding in www/js/tristate.js
+# TU TAREA: Completa el binding de JavaScript en www/js/tristate.js
 #
-# This app won't work until you implement the binding methods!
-# Open www/js/tristate.js and follow the instructions there.
+# ¡Esta app no funcionará hasta que implementes los métodos del binding!
+# Abre www/js/tristate.js y sigue las instrucciones allí.
 
 library(shiny)
 library(bslib)
 library(dplyr)
 
-# Source our custom component
+# Cargar nuestro componente personalizado
 source("R/triStateInput.R")
 
-# Sample data for the demo
-tasks <- data.frame(
+# Datos de ejemplo para la demo
+tareas <- data.frame(
   id = 1:10,
-  task = c(
-    "Review pull request",
-    "Write documentation",
-    "Fix login bug",
-    "Update dependencies",
-    "Design new feature",
-    "Code review",
-    "Deploy to staging",
-    "Write unit tests",
-    "Refactor API",
-    "Update README"
+  tarea = c(
+    "Revisar pull request",
+    "Escribir documentación",
+    "Corregir bug de login",
+    "Actualizar dependencias",
+    "Diseñar nueva funcionalidad",
+    "Revisión de código",
+    "Desplegar a staging",
+    "Escribir tests unitarios",
+    "Refactorizar API",
+    "Actualizar README"
   ),
-  status = c(
-    "completed", "active", "active", "completed", "active",
-    "completed", "completed", "active", "completed", "active"
+  estado = c(
+    "completada", "activa", "activa", "completada", "activa",
+    "completada", "completada", "activa", "completada", "activa"
   ),
   stringsAsFactors = FALSE
 )
@@ -38,52 +38,52 @@ tasks <- data.frame(
 # UI
 ui <- page_sidebar(
   theme = bs_theme(version = 5, bootswatch = "flatly"),
-  title = "Exercise 1: Tri-State Toggle Input",
+  title = "Ejercicio 1: Input Toggle Tri-Estado",
 
   sidebar = sidebar(
-    title = "Instructions",
-    p("Complete the JavaScript binding in", code("www/js/tristate.js")),
-    p("When working, the toggle below should:"),
+    title = "Instrucciones",
+    p("Completa el binding de JavaScript en", code("www/js/tristate.js")),
+    p("Cuando funcione, el toggle debería:"),
     tags$ul(
-      tags$li("Update when you click each option"),
-      tags$li("Filter the task table"),
-      tags$li("Show the current value in the debug box")
+      tags$li("Actualizarse al hacer clic en cada opción"),
+      tags$li("Filtrar la tabla de tareas"),
+      tags$li("Mostrar el valor actual en el cuadro de debug")
     ),
     hr(),
     triStateInput(
       inputId = "task_filter",
-      label = "Filter tasks:",
-      choices = c("All" = "all", "Active" = "active", "Completed" = "completed"),
+      label = "Filtrar tareas:",
+      choices = c("Todas" = "all", "Activas" = "activa", "Completadas" = "completada"),
       selected = "all"
     ),
     hr(),
-    h6("Debug: Current value from R"),
+    h6("Debug: Valor actual desde R"),
     verbatimTextOutput("filter_value"),
     hr(),
-    actionButton("reset_filter", "Reset to 'All'", class = "btn-secondary"),
-    p(class = "text-muted mt-2", "This button tests updateTriStateInput()")
+    actionButton("reset_filter", "Restablecer a 'Todas'", class = "btn-secondary"),
+    p(class = "text-muted mt-2", "Este botón prueba updateTriStateInput()")
   ),
 
   card(
-    card_header("Filtered Tasks"),
+    card_header("Tareas Filtradas"),
     card_body(tableOutput("task_table"))
   ),
 
   card(
-    card_header("Progress Checklist"),
+    card_header("Lista de Progreso"),
     card_body(
       class = "bg-light",
-      tags$p(tags$strong("After implementing find() and getValue():")),
+      tags$p(tags$strong("Después de implementar find() y getValue():")),
       tags$ul(
-        tags$li("The 'Current value' box should show 'all' (not NULL)")
+        tags$li("El cuadro 'Valor actual' debería mostrar 'all' (no NULL)")
       ),
-      tags$p(tags$strong("After implementing subscribe():")),
+      tags$p(tags$strong("Después de implementar subscribe():")),
       tags$ul(
-        tags$li("Clicking options should update the value and filter the table")
+        tags$li("Al hacer clic en las opciones debería actualizar el valor y filtrar la tabla")
       ),
-      tags$p(tags$strong("After implementing setValue() and receiveMessage():")),
+      tags$p(tags$strong("Después de implementar setValue() y receiveMessage():")),
       tags$ul(
-        tags$li("The 'Reset to All' button should work")
+        tags$li("El botón 'Restablecer a Todas' debería funcionar")
       )
     )
   )
@@ -91,33 +91,33 @@ ui <- page_sidebar(
 
 # Server
 server <- function(input, output, session) {
-  # Filter tasks based on the tri-state input
+  # Filtrar tareas según el input tri-state
   filtered_tasks <- reactive({
     filter_val <- input$task_filter
 
     if (is.null(filter_val) || filter_val == "all") {
-      tasks
+      tareas
     } else {
-      tasks %>% filter(status == filter_val)
+      tareas %>% filter(estado == filter_val)
     }
   })
 
-  # Render the filtered task table
+  # Renderizar la tabla de tareas filtradas
   output$task_table <- renderTable({
     filtered_tasks() %>%
-      select(Task = task, Status = status)
+      select(Tarea = tarea, Estado = estado)
   })
 
-  # Show the current filter value (for debugging)
+  # Mostrar el valor actual del filtro (para debugging)
   output$filter_value <- renderPrint({
     input$task_filter
   })
 
-  # Reset button handler - tests updateTriStateInput
+  # Manejador del botón de restablecer - prueba updateTriStateInput
   observeEvent(input$reset_filter, {
     updateTriStateInput(session, "task_filter", "all")
   })
 }
 
-# Run the app
+# Ejecutar la app
 shinyApp(ui = ui, server = server)

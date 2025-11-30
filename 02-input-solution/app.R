@@ -1,31 +1,31 @@
-# Exercise 1: Custom Input Binding - SOLUTION
-# ============================================
+# Ejercicio 1: Input Binding Personalizado - SOLUCIÓN
+# ====================================================
 
 library(shiny)
 library(bslib)
 library(dplyr)
 
-# Source our custom component
+# Cargar nuestro componente personalizado
 source("R/triStateInput.R")
 
-# Sample data for the demo
-tasks <- data.frame(
+# Datos de ejemplo para la demo
+tareas <- data.frame(
   id = 1:10,
-  task = c(
-    "Review pull request",
-    "Write documentation",
-    "Fix login bug",
-    "Update dependencies",
-    "Design new feature",
-    "Code review",
-    "Deploy to staging",
-    "Write unit tests",
-    "Refactor API",
-    "Update README"
+  tarea = c(
+    "Revisar pull request",
+    "Escribir documentación",
+    "Corregir bug de login",
+    "Actualizar dependencias",
+    "Diseñar nueva funcionalidad",
+    "Revisión de código",
+    "Desplegar a staging",
+    "Escribir tests unitarios",
+    "Refactorizar API",
+    "Actualizar README"
   ),
-  status = c(
-    "completed", "active", "active", "completed", "active",
-    "completed", "completed", "active", "completed", "active"
+  estado = c(
+    "completada", "activa", "activa", "completada", "activa",
+    "completada", "completada", "activa", "completada", "activa"
   ),
   stringsAsFactors = FALSE
 )
@@ -33,59 +33,59 @@ tasks <- data.frame(
 # UI
 ui <- page_sidebar(
   theme = bs_theme(version = 5, bootswatch = "flatly"),
-  title = "Exercise 1: Tri-State Toggle Input (Solution)",
+  title = "Ejercicio 1: Input Toggle Tri-Estado (Solución)",
 
   sidebar = sidebar(
-    title = "This is the working solution!",
+    title = "¡Esta es la solución funcionando!",
     hr(),
     triStateInput(
       inputId = "task_filter",
-      label = "Filter tasks:",
-      choices = c("All" = "all", "Active" = "active", "Completed" = "completed"),
+      label = "Filtrar tareas:",
+      choices = c("Todas" = "all", "Activas" = "activa", "Completadas" = "completada"),
       selected = "all"
     ),
     hr(),
-    h6("Current value from R:"),
+    h6("Valor actual desde R:"),
     verbatimTextOutput("filter_value"),
     hr(),
-    actionButton("reset_filter", "Reset to 'All'", class = "btn-secondary")
+    actionButton("reset_filter", "Restablecer a 'Todas'", class = "btn-secondary")
   ),
 
   card(
-    card_header("Filtered Tasks"),
+    card_header("Tareas Filtradas"),
     card_body(tableOutput("task_table"))
   )
 )
 
 # Server
 server <- function(input, output, session) {
-  # Filter tasks based on the tri-state input
+  # Filtrar tareas según el input tri-state
   filtered_tasks <- reactive({
     filter_val <- input$task_filter
 
     if (is.null(filter_val) || filter_val == "all") {
-      tasks
+      tareas
     } else {
-      tasks %>% filter(status == filter_val)
+      tareas %>% filter(estado == filter_val)
     }
   })
 
-  # Render the filtered task table
+  # Renderizar la tabla de tareas filtradas
   output$task_table <- renderTable({
     filtered_tasks() %>%
-      select(Task = task, Status = status)
+      select(Tarea = tarea, Estado = estado)
   })
 
-  # Show the current filter value
+  # Mostrar el valor actual del filtro
   output$filter_value <- renderPrint({
     input$task_filter
   })
 
-  # Reset button handler
+  # Manejador del botón de restablecer
   observeEvent(input$reset_filter, {
     updateTriStateInput(session, "task_filter", "all")
   })
 }
 
-# Run the app
+# Ejecutar la app
 shinyApp(ui = ui, server = server)

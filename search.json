@@ -91,6 +91,20 @@
     "text": "Estructura del Repositorio\nworkshop-custom-shiny/\n├── 00-demo-finished/      # Demo completa\n├── 01-input-starter/      # Ejercicio 1 (esqueleto)\n├── 02-input-solution/     # Ejercicio 1 (solución)\n├── 03-output-starter/     # Ejercicio 2 (esqueleto)\n├── 04-output-solution/    # Ejercicio 2 (solución)\n└── reference/             # Recursos adicionales"
   },
   {
+    "objectID": "index.html#qué-es-el-dom",
+    "href": "index.html#qué-es-el-dom",
+    "title": "Creando Inputs y Outputs Personalizados para Shiny",
+    "section": "¿Qué es el DOM?",
+    "text": "¿Qué es el DOM?\nEl DOM (Document Object Model) es la representación en memoria de la página web.\n&lt;div id=\"miInput\" class=\"mi-clase\"&gt;\n  &lt;button data-value=\"1\"&gt;Opción 1&lt;/button&gt;\n  &lt;button data-value=\"2\"&gt;Opción 2&lt;/button&gt;\n&lt;/div&gt;\nJavaScript puede leer y modificar el DOM para cambiar lo que ve el usuario.\n\n\n\n\n\n\nTip\n\n\nPiensa en el DOM como un árbol de elementos HTML que JavaScript puede manipular."
+  },
+  {
+    "objectID": "index.html#selectores-css-en-javascript",
+    "href": "index.html#selectores-css-en-javascript",
+    "title": "Creando Inputs y Outputs Personalizados para Shiny",
+    "section": "Selectores CSS en JavaScript",
+    "text": "Selectores CSS en JavaScript\njQuery usa selectores CSS para encontrar elementos:\n\n\n\n\n\n\n\n\nSelector\nEncuentra\nEjemplo\n\n\n\n\n.clase\nElementos con esa clase\n$('.mi-clase')\n\n\n#id\nElemento con ese ID\n$('#miInput')\n\n\n[attr=\"valor\"]\nElementos con ese atributo\n$('[data-value=\"1\"]')\n\n\n\n// Encontrar todos los botones dentro de .mi-clase\n$('.mi-clase').find('button')"
+  },
+  {
     "objectID": "index.html#cómo-se-comunican-r-y-javascript",
     "href": "index.html#cómo-se-comunican-r-y-javascript",
     "title": "Creando Inputs y Outputs Personalizados para Shiny",
@@ -109,7 +123,7 @@
     "href": "index.html#dos-registros-centrales",
     "title": "Creando Inputs y Outputs Personalizados para Shiny",
     "section": "Dos Registros Centrales",
-    "text": "Dos Registros Centrales\nShiny mantiene dos registros para gestionar componentes:\n// Registro de inputs\nShiny.inputBindings.register(myInputBinding, 'pkg.myInput');\n\n// Registro de outputs\nShiny.outputBindings.register(myOutputBinding, 'pkg.myOutput');\n\n\n\n\n\n\nNote\n\n\nCuando Shiny inicializa, llama a Shiny.bindAll() para escanear el DOM y asociar cada elemento con su binding correspondiente."
+    "text": "Dos Registros Centrales\nShiny mantiene dos registros para gestionar componentes:\n// Registro de inputs\nShiny.inputBindings.register(myInputBinding, 'pkg.myInput');\n\n// Registro de outputs\nShiny.outputBindings.register(myOutputBinding, 'pkg.myOutput');\n\n\n\n\n\n\nNote\n\n\n¿Qué hace register()? Añade tu binding a la lista de Shiny. El segundo parámetro ('pkg.myInput') es un identificador único que ayuda a debuggear y permite que bindings con mayor prioridad tomen precedencia."
   },
   {
     "objectID": "index.html#anatomía-de-un-componente-personalizado",
@@ -151,7 +165,14 @@
     "href": "index.html#estructura-del-ejercicio",
     "title": "Creando Inputs y Outputs Personalizados para Shiny",
     "section": "Estructura del Ejercicio",
-    "text": "Estructura del Ejercicio\n01-input-starter/\n├── app.R                    # App de Shiny\n├── R/\n│   └── triStateInput.R      # Funciones R (completas)\n└── www/\n    ├── css/\n    │   └── tristate.css     # Estilos (completos)\n    └── js/\n        └── tristate.js      # ¡AQUÍ TRABAJAREMOS!"
+    "text": "Estructura del Ejercicio\n01-input-starter/\n├── app.R                    # App de Shiny\n├── R/\n│   └── triStateInput.R      # Funciones R (completas)\n└── www/\n    ├── css/\n    │   └── tristate.css     # Estilos (completos)\n    └── js/\n        └── tristate.js      # ¡AQUÍ TRABAJAREMOS!\n\n\n\n\n\n\nNote\n\n\n¿Por qué www/? Shiny sirve automáticamente los archivos en esta carpeta. Cualquier archivo en www/ está disponible en la URL de tu app."
+  },
+  {
+    "objectID": "index.html#cómo-se-cargan-css-y-javascript",
+    "href": "index.html#cómo-se-cargan-css-y-javascript",
+    "title": "Creando Inputs y Outputs Personalizados para Shiny",
+    "section": "¿Cómo se Cargan CSS y JavaScript?",
+    "text": "¿Cómo se Cargan CSS y JavaScript?\nLa función htmlDependency() le dice a Shiny qué archivos incluir:\ntriStateDependency &lt;- function() {\n  htmltools::htmlDependency(\n    name = \"tristate\",\n    version = \"1.0.0\",\n    src = c(file = \"www\"),        # Carpeta donde están los archivos\n    stylesheet = \"css/tristate.css\",\n    script = \"js/tristate.js\"\n  )\n}\n\n\n\n\n\n\nTip\n\n\nShiny solo carga cada dependencia una vez, aunque la uses múltiples veces."
   },
   {
     "objectID": "index.html#el-lado-r-ya-está-completo",
@@ -159,6 +180,13 @@
     "title": "Creando Inputs y Outputs Personalizados para Shiny",
     "section": "El Lado R Ya Está Completo",
     "text": "El Lado R Ya Está Completo\ntriStateInput &lt;- function(inputId, label, choices, selected = NULL) {\n  tagList(\n    triStateDependency(),\n    tags$div(\n      id = inputId,\n      class = \"tri-state-input\",\n      `data-selected` = selected,\n      tags$label(class = \"control-label\", label),\n      tags$div(class = \"tri-state-options\", ...)\n    )\n  )\n}"
+  },
+  {
+    "objectID": "index.html#conceptos-clave-de-javascript",
+    "href": "index.html#conceptos-clave-de-javascript",
+    "title": "Creando Inputs y Outputs Personalizados para Shiny",
+    "section": "Conceptos Clave de JavaScript",
+    "text": "Conceptos Clave de JavaScript\nAntes de ver el código, tres conceptos importantes:\n$.extend(objeto, {...}): Añade métodos a un objeto existente. Es como agregar funciones a una clase.\nscope: El área del DOM donde Shiny busca elementos. Normalmente es todo el documento, pero en modales o UI dinámica puede ser solo una sección.\ncallback: Una función que Shiny te pasa para que la llames cuando el valor cambie. Al llamar callback(), le dices a Shiny “¡el valor cambió, actualiza R!”"
   },
   {
     "objectID": "index.html#el-esqueleto-de-javascript",
@@ -200,7 +228,7 @@
     "href": "index.html#namespacing-de-eventos",
     "title": "Creando Inputs y Outputs Personalizados para Shiny",
     "section": "Namespacing de Eventos",
-    "text": "Namespacing de Eventos\n// ✅ Correcto: usa namespace\n$(el).on('click.triStateBinding', handler);\n\n// ❌ Incorrecto: sin namespace\n$(el).on('click', handler);\n\n\n\n\n\n\nNote\n\n\nEl namespace (.triStateBinding) permite que unsubscribe() remueva solo nuestros handlers sin afectar otros."
+    "text": "Namespacing de Eventos\n// ✅ Correcto: usa namespace\n$(el).on('click.triStateBinding', handler);\n\n// ❌ Incorrecto: sin namespace\n$(el).on('click', handler);\n\n\n\n\n\n\nNote\n\n\n¿Qué es unsubscribe()? Shiny lo llama cuando el elemento se remueve del DOM. Si usas namespace, puedes implementarlo así:\nunsubscribe: function(el) {\n  $(el).off('.triStateBinding');  // Remueve SOLO nuestros eventos\n}"
   },
   {
     "objectID": "index.html#checkpoint-2",
@@ -217,11 +245,11 @@
     "text": "Paso 4: Implementar setValue() y receiveMessage()\nPara que updateTriStateInput() funcione desde R:\nsetValue: function(el, value) {\n  $(el).data('selected', value);\n  $(el).find('.tri-state-option').removeClass('active');\n  $(el).find('.tri-state-option[data-value=\"' + value + '\"]').addClass('active');\n},\n\nreceiveMessage: function(el, data) {\n  if (data.hasOwnProperty('selected')) {\n    this.setValue(el, data.selected);\n    $(el).trigger('change');\n  }\n}"
   },
   {
-    "objectID": "index.html#no-olvides-el-evento-change",
-    "href": "index.html#no-olvides-el-evento-change",
+    "objectID": "index.html#por-qué-.triggerchange",
+    "href": "index.html#por-qué-.triggerchange",
     "title": "Creando Inputs y Outputs Personalizados para Shiny",
-    "section": "No Olvides el Evento Change",
-    "text": "No Olvides el Evento Change\nreceiveMessage: function(el, data) {\n  if (data.hasOwnProperty('selected')) {\n    this.setValue(el, data.selected);\n    $(el).trigger('change');  // ¡Importante!\n  }\n}\n\n\n\n\n\n\nWarning\n\n\nSin $(el).trigger('change'), la actualización no se propaga a las dependencias reactivas."
+    "section": "¿Por qué .trigger('change')?",
+    "text": "¿Por qué .trigger('change')?\nEl flujo cuando R actualiza un input:\n\nR llama updateTriStateInput() → envía mensaje por WebSocket\nJavaScript recibe en receiveMessage() → llama setValue()\nsetValue() actualiza el DOM, pero… Shiny no sabe que cambió\n.trigger('change') dispara el evento → subscribe() lo escucha → llama callback()\nAhora Shiny sabe que debe llamar getValue() y actualizar R\n\n\n\n\n\n\n\nWarning\n\n\nSin .trigger('change'), el valor cambia visualmente pero R nunca se entera."
   },
   {
     "objectID": "index.html#también-necesitamos-escuchar-change",

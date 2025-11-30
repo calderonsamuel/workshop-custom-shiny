@@ -315,13 +315,8 @@ LatinR 2025
 </section>
 <section id="el-flujo-de-comunicación" class="slide level2">
 <h2>El Flujo de Comunicación</h2>
-<p><strong>JavaScript (Navegador):</strong></p>
-<p>Usuario → <code>Input Binding</code> → <em>WebSocket</em> → <code>input$x</code></p>
-<p><strong>R (Servidor):</strong></p>
-<p><code>input$x</code> → Lógica Reactiva → <code>output$y</code></p>
-<p><strong>JavaScript (Navegador):</strong></p>
-<p><code>output$y</code> → <em>WebSocket</em> → <code>Output Binding</code> → DOM</p>
-</section>
+
+<img data-src="images/flow-diagram.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
 <section id="dos-registros-centrales" class="slide level2">
 <h2>Dos Registros Centrales</h2>
 <p>Shiny mantiene dos registros para gestionar componentes:</p>

@@ -39,22 +39,24 @@ statCardOutput <- function(outputId, width = "200px") {
 #' Render a stat card
 #'
 #' @param expr An expression that returns a list with title, value, and status
-#' @param env The environment in which to evaluate expr
-#' @param quoted Is expr a quoted expression?
 #'
 #' @return A render function for use with statCardOutput
 #' @export
-renderStatCard <- function(expr, env = parent.frame(), quoted = FALSE) {
-  # Convert expression to function
-  func <- shiny::exprToFunction(expr, env, quoted)
+renderStatCard <- function(expr) {
+  # Modern pattern: capture expression as quosure and convert to function
+  func <- shiny::quoToFunction(rlang::enquo0(expr))
 
-  function() {
-    val <- func()
-    # Ensure we return the expected structure
-    list(
-      title = val$title,
-      value = val$value,
-      status = val$status
-    )
-  }
+  # Use createRenderFunction for proper Shiny integration
+  shiny::createRenderFunction(
+    func,
+    transform = function(value, session, name, ...) {
+      # Ensure we return the expected structure
+      list(
+        title = value$title,
+        value = value$value,
+        status = value$status
+      )
+    },
+    outputFunc = statCardOutput
+  )
 }

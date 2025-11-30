@@ -70,6 +70,38 @@ workshop-custom-shiny/
 
 # Fundamentos Conceptuales {background-color="#2c3e50"}
 
+## ¿Qué es el DOM?
+
+El **DOM** (Document Object Model) es la representación en memoria de la página web.
+
+```html
+<div id="miInput" class="mi-clase">
+  <button data-value="1">Opción 1</button>
+  <button data-value="2">Opción 2</button>
+</div>
+```
+
+JavaScript puede leer y modificar el DOM para cambiar lo que ve el usuario.
+
+::: {.callout-tip}
+Piensa en el DOM como un árbol de elementos HTML que JavaScript puede manipular.
+:::
+
+## Selectores CSS en JavaScript
+
+jQuery usa **selectores CSS** para encontrar elementos:
+
+| Selector | Encuentra | Ejemplo |
+|----------|-----------|---------|
+| `.clase` | Elementos con esa clase | `$('.mi-clase')` |
+| `#id` | Elemento con ese ID | `$('#miInput')` |
+| `[attr="valor"]` | Elementos con ese atributo | `$('[data-value="1"]')` |
+
+```javascript
+// Encontrar todos los botones dentro de .mi-clase
+$('.mi-clase').find('button')
+```
+
 ## ¿Cómo se Comunican R y JavaScript?
 
 ::: {.columns}
@@ -109,7 +141,7 @@ Shiny.outputBindings.register(myOutputBinding, 'pkg.myOutput');
 ```
 
 ::: {.callout-note}
-Cuando Shiny inicializa, llama a `Shiny.bindAll()` para escanear el DOM y asociar cada elemento con su binding correspondiente.
+**¿Qué hace `register()`?** Añade tu binding a la lista de Shiny. El segundo parámetro (`'pkg.myInput'`) es un identificador único que ayuda a debuggear y permite que bindings con mayor prioridad tomen precedencia.
 :::
 
 ## Anatomía de un Componente Personalizado
@@ -186,6 +218,30 @@ Este componente demuestra que `getValue()` puede retornar cualquier tipo de dato
         └── tristate.js      # ¡AQUÍ TRABAJAREMOS!
 ```
 
+::: {.callout-note}
+**¿Por qué `www/`?** Shiny sirve automáticamente los archivos en esta carpeta. Cualquier archivo en `www/` está disponible en la URL de tu app.
+:::
+
+## ¿Cómo se Cargan CSS y JavaScript?
+
+La función `htmlDependency()` le dice a Shiny qué archivos incluir:
+
+```r
+triStateDependency <- function() {
+  htmltools::htmlDependency(
+    name = "tristate",
+    version = "1.0.0",
+    src = c(file = "www"),        # Carpeta donde están los archivos
+    stylesheet = "css/tristate.css",
+    script = "js/tristate.js"
+  )
+}
+```
+
+::: {.callout-tip}
+Shiny solo carga cada dependencia **una vez**, aunque la uses múltiples veces.
+:::
+
 ## El Lado R Ya Está Completo
 
 ```r
@@ -202,6 +258,16 @@ triStateInput <- function(inputId, label, choices, selected = NULL) {
   )
 }
 ```
+
+## Conceptos Clave de JavaScript
+
+Antes de ver el código, tres conceptos importantes:
+
+**`$.extend(objeto, {...})`**: Añade métodos a un objeto existente. Es como agregar funciones a una clase.
+
+**`scope`**: El área del DOM donde Shiny busca elementos. Normalmente es todo el documento, pero en modales o UI dinámica puede ser solo una sección.
+
+**`callback`**: Una función que Shiny te pasa para que la llames cuando el valor cambie. Al llamar `callback()`, le dices a Shiny "¡el valor cambió, actualiza R!"
 
 ## El Esqueleto de JavaScript
 
@@ -295,8 +361,15 @@ $(el).on('click', handler);
 ```
 
 ::: {.callout-note}
-El namespace (`.triStateBinding`) permite que `unsubscribe()` remueva solo nuestros handlers sin afectar otros.
+**¿Qué es `unsubscribe()`?** Shiny lo llama cuando el elemento se remueve del DOM. Si usas namespace, puedes implementarlo así:
+
+```javascript
+unsubscribe: function(el) {
+  $(el).off('.triStateBinding');  // Remueve SOLO nuestros eventos
+}
+```
 :::
+
 
 ## Checkpoint 2
 
@@ -325,19 +398,18 @@ receiveMessage: function(el, data) {
 }
 ```
 
-## No Olvides el Evento Change
+## ¿Por qué `.trigger('change')`?
 
-```javascript
-receiveMessage: function(el, data) {
-  if (data.hasOwnProperty('selected')) {
-    this.setValue(el, data.selected);
-    $(el).trigger('change');  // ¡Importante!
-  }
-}
-```
+El flujo cuando R actualiza un input:
+
+1. R llama `updateTriStateInput()` → envía mensaje por WebSocket
+2. JavaScript recibe en `receiveMessage()` → llama `setValue()`
+3. `setValue()` actualiza el DOM, pero... **Shiny no sabe que cambió**
+4. `.trigger('change')` dispara el evento → `subscribe()` lo escucha → llama `callback()`
+5. Ahora Shiny sabe que debe llamar `getValue()` y actualizar R
 
 ::: {.callout-warning}
-Sin `$(el).trigger('change')`, la actualización no se propaga a las dependencias reactivas.
+Sin `.trigger('change')`, el valor cambia visualmente pero R nunca se entera.
 :::
 
 ## También necesitamos escuchar 'change'

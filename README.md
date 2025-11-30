@@ -1,5 +1,7 @@
 # Workshop: Creando inputs y outputs personalizados para Shiny
 
+> **Slides de la presentación:** [https://calderonsamuel.github.io/workshop-custom-shiny/](https://calderonsamuel.github.io/workshop-custom-shiny/)
+
 Este repositorio contiene el material del workshop "Creando inputs y outputs personalizados para Shiny" para LatinR 2025.
 
 ## Descripción del Workshop

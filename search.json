@@ -91,6 +91,13 @@
     "text": "Estructura del Repositorio\nworkshop-custom-shiny/\n├── 00-demo-finished/      # Demo completa\n├── 01-input-starter/      # Ejercicio 1 (esqueleto)\n├── 02-input-solution/     # Ejercicio 1 (solución)\n├── 03-output-starter/     # Ejercicio 2 (esqueleto)\n├── 04-output-solution/    # Ejercicio 2 (solución)\n└── reference/             # Recursos adicionales"
   },
   {
+    "objectID": "index.html#herramientas-de-debugging",
+    "href": "index.html#herramientas-de-debugging",
+    "title": "Creando Inputs y Outputs Personalizados para Shiny",
+    "section": "Herramientas de Debugging",
+    "text": "Herramientas de Debugging\n\n\nEn R: browser()\nserver &lt;- function(input, output) {\n  observe({\n    browser()  # Pausa aquí\n    print(input$mi_input)\n  })\n}\nPausa la ejecución en R. Usa n (next), c (continue), Q (quit).\n\nEn JavaScript: debugger\ngetValue: function(el) {\n  debugger;  // Pausa aquí\n  return $(el).data('selected');\n}\nAbre DevTools (F12) antes. La ejecución pausa en esa línea.\n\n\n\n\n\n\n\nTip\n\n\nUsaremos estas herramientas durante los ejercicios para ver el flujo de ejecución."
+  },
+  {
     "objectID": "index.html#qué-es-el-dom",
     "href": "index.html#qué-es-el-dom",
     "title": "Creando Inputs y Outputs Personalizados para Shiny",

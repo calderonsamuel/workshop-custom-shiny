@@ -1,0 +1,712 @@
+---
+title: "Creando Inputs y Outputs Personalizados para Shiny"
+subtitle: "Más Allá de los Widgets Incorporados"
+author: "LatinR 2025"
+format:
+  revealjs:
+    theme: [default, custom.scss]
+    slide-number: true
+    preview-links: auto
+    code-line-numbers: false
+    highlight-style: github
+    transition: fade
+    footer: "Bindings Personalizados en Shiny | LatinR 2025"
+    logo: ""
+    mermaid:
+      theme: neutral
+execute:
+  echo: true
+  eval: false
+---
+
+# Bienvenida {background-color="#2c3e50"}
+
+## Agenda del Taller (90 min)
+
+| Tiempo | Segmento |
+|--------|----------|
+| 0:00–0:05 | Bienvenida y orientación |
+| 0:05–0:15 | Fundamentos: Cómo funcionan los bindings |
+| 0:15–0:55 | **Ejercicio 1:** Input binding personalizado |
+| 0:55–1:00 | Pausa corta |
+| 1:00–1:20 | **Ejercicio 2:** Output binding personalizado |
+| 1:20–1:30 | Cierre y próximos pasos |
+
+## Objetivos de Aprendizaje
+
+Al finalizar este taller podrás:
+
+1. **Entender** cómo el sistema de bindings de Shiny conecta el navegador con R
+2. **Construir** un input binding personalizado (toggle tri-estado)
+3. **Construir** un output binding personalizado (tarjeta de estadísticas)
+4. **Conocer** recursos para implementaciones más avanzadas
+
+## Verificación del Entorno
+
+Antes de comenzar, verifica que puedas ejecutar la demo:
+
+```r
+# Abre el archivo y ejecuta la app
+# 00-demo-finished/app.R
+```
+
+::: {.callout-tip}
+Si ves el toggle de tres estados y la tarjeta de estadísticas funcionando, ¡estás listo!
+:::
+
+## Estructura del Repositorio
+
+```
+workshop-custom-shiny/
+├── 00-demo-finished/      # Demo completa
+├── 01-input-starter/      # Ejercicio 1 (esqueleto)
+├── 02-input-solution/     # Ejercicio 1 (solución)
+├── 03-output-starter/     # Ejercicio 2 (esqueleto)
+├── 04-output-solution/    # Ejercicio 2 (solución)
+└── reference/             # Recursos adicionales
+```
+
+# Fundamentos Conceptuales {background-color="#2c3e50"}
+
+## ¿Cómo se Comunican R y JavaScript?
+
+::: {.columns}
+::: {.column width="50%"}
+### El Navegador (JavaScript)
+- Maneja la interfaz de usuario
+- Detecta eventos del usuario
+- Actualiza el DOM
+:::
+
+::: {.column width="50%"}
+### El Servidor (R)
+- Ejecuta la lógica de negocio
+- Procesa datos
+- Genera outputs reactivos
+:::
+:::
+
+::: {.fragment}
+**WebSocket**: Conexión bidireccional persistente que permite mensajes en tiempo real en ambas direcciones.
+:::
+
+## El Flujo de Comunicación
+
+::: {.columns}
+::: {.column width="40%"}
+### Navegador (JS)
+
+1. Usuario hace clic
+2. **Input Binding** captura el evento
+3. Envía valor via WebSocket →
+4. ← Recibe datos via WebSocket
+5. **Output Binding** actualiza DOM
+:::
+
+::: {.column width="20%"}
+<br><br><br>
+
+**⟷ WebSocket ⟷**
+
+Conexión bidireccional persistente
+:::
+
+::: {.column width="40%"}
+### Servidor (R)
+
+1. Recibe `input$x`
+2. Ejecuta lógica reactiva
+3. Genera `output$y`
+4. Envía resultado al navegador
+:::
+:::
+
+## Dos Registros Centrales
+
+Shiny mantiene dos registros para gestionar componentes:
+
+```javascript
+// Registro de inputs
+Shiny.inputBindings.register(myInputBinding, 'pkg.myInput');
+
+// Registro de outputs
+Shiny.outputBindings.register(myOutputBinding, 'pkg.myOutput');
+```
+
+::: {.callout-note}
+Cuando Shiny inicializa, llama a `Shiny.bindAll()` para escanear el DOM y asociar cada elemento con su binding correspondiente.
+:::
+
+## Anatomía de un Componente Personalizado
+
+::: {.columns}
+::: {.column width="50%"}
+### Lado R
+1. Función UI que genera HTML
+2. Dependencias CSS/JS
+3. Función render (outputs)
+4. Función update (inputs)
+:::
+
+::: {.column width="50%"}
+### Lado JavaScript
+1. Clase que extiende el binding base
+2. Métodos requeridos
+3. Registro en Shiny
+:::
+:::
+
+## Input Binding: Métodos Esenciales
+
+| Método | Propósito |
+|--------|-----------|
+| `find(scope)` | Localiza instancias del input en el DOM |
+| `getValue(el)` | Extrae el valor actual para enviar a R |
+| `subscribe(el, callback)` | Configura listeners de eventos |
+| `setValue(el, value)` | Establece el valor programáticamente |
+| `receiveMessage(el, data)` | Maneja mensajes desde R |
+
+## Output Binding: Métodos Esenciales
+
+| Método | Propósito |
+|--------|-----------|
+| `find(scope)` | Localiza instancias del output en el DOM |
+| `renderValue(el, data)` | Renderiza los datos recibidos de R |
+| `renderError(el, err)` | Muestra errores (opcional) |
+| `clearError(el)` | Limpia mensajes de error (opcional) |
+
+## El Patrón es Consistente
+
+::: {.callout-important}
+Una vez que entiendes el patrón de input binding (`find` → `getValue` → `subscribe`), puedes construir **cualquier** input.
+
+Una vez que entiendes el patrón de output (`find` → `renderValue`), puedes renderizar **cualquier cosa**.
+:::
+
+# Ejercicio 1: Input Binding {background-color="#27ae60"}
+
+## ¿Qué Vamos a Construir?
+
+Un **toggle de tres estados** para filtrar tareas:
+
+- **Todas**: Muestra todas las tareas
+- **Activas**: Solo tareas pendientes
+- **Completadas**: Solo tareas terminadas
+
+::: {.fragment}
+Este componente demuestra que `getValue()` puede retornar cualquier tipo de dato, no solo booleanos.
+:::
+
+## Estructura del Ejercicio
+
+```
+01-input-starter/
+├── app.R                    # App de Shiny
+├── R/
+│   └── triStateInput.R      # Funciones R (completas)
+└── www/
+    ├── css/
+    │   └── tristate.css     # Estilos (completos)
+    └── js/
+        └── tristate.js      # ¡AQUÍ TRABAJAREMOS!
+```
+
+## El Lado R Ya Está Completo
+
+```r
+triStateInput <- function(inputId, label, choices, selected = NULL) {
+  tagList(
+    triStateDependency(),
+    tags$div(
+      id = inputId,
+      class = "tri-state-input",
+      `data-selected` = selected,
+      tags$label(class = "control-label", label),
+      tags$div(class = "tri-state-options", ...)
+    )
+  )
+}
+```
+
+## El Esqueleto de JavaScript
+
+```{.javascript filename="www/js/tristate.js"}
+var triStateBinding = new Shiny.InputBinding();
+
+$.extend(triStateBinding, {
+  find: function(scope) {
+    // TU CÓDIGO AQUÍ
+  },
+  getValue: function(el) {
+    // TU CÓDIGO AQUÍ
+  },
+  subscribe: function(el, callback) {
+    // TU CÓDIGO AQUÍ
+  },
+  // ... más métodos
+});
+
+Shiny.inputBindings.register(triStateBinding, 'workshop.triStateInput');
+```
+
+## Paso 1: Implementar `find()`
+
+El método `find()` localiza todas las instancias del input en el DOM.
+
+```javascript
+find: function(scope) {
+  return $(scope).find('.tri-state-input');
+}
+```
+
+::: {.callout-tip}
+Usa selectores de clase (`.clase`) en lugar de ID para soportar múltiples instancias.
+:::
+
+## Paso 2: Implementar `getValue()`
+
+El método `getValue()` extrae el valor actual del elemento.
+
+```javascript
+getValue: function(el) {
+  return $(el).data('selected');
+}
+```
+
+::: {.callout-warning}
+**Error común:** Olvidar el `return`. Sin él, el binding falla silenciosamente y R recibe `NULL`.
+:::
+
+## Checkpoint 1
+
+Después de implementar `find()` y `getValue()`:
+
+- [ ] Sin errores de JavaScript en la consola
+- [ ] El cuadro "Valor actual" muestra `"all"` (no `NULL`)
+
+```r
+# En la consola de R, deberías ver:
+input$task_filter
+# [1] "all"
+```
+
+## Paso 3: Implementar `subscribe()`
+
+El método `subscribe()` configura los event listeners.
+
+```javascript
+subscribe: function(el, callback) {
+  $(el).on('click.triStateBinding', '.tri-state-option', function(e) {
+    var value = $(this).data('value');
+    $(el).data('selected', value);
+
+    // Actualizar estado visual
+    $(el).find('.tri-state-option').removeClass('active');
+    $(this).addClass('active');
+
+    callback();
+  });
+}
+```
+
+## Namespacing de Eventos
+
+```javascript
+// ✅ Correcto: usa namespace
+$(el).on('click.triStateBinding', handler);
+
+// ❌ Incorrecto: sin namespace
+$(el).on('click', handler);
+```
+
+::: {.callout-note}
+El namespace (`.triStateBinding`) permite que `unsubscribe()` remueva solo nuestros handlers sin afectar otros.
+:::
+
+## Checkpoint 2
+
+Después de implementar `subscribe()`:
+
+- [ ] Al hacer clic en las opciones, cambia el valor en R
+- [ ] La tabla de tareas se filtra correctamente
+- [ ] El estado visual (botón activo) se actualiza
+
+## Paso 4: Implementar `setValue()` y `receiveMessage()`
+
+Para que `updateTriStateInput()` funcione desde R:
+
+```javascript
+setValue: function(el, value) {
+  $(el).data('selected', value);
+  $(el).find('.tri-state-option').removeClass('active');
+  $(el).find('.tri-state-option[data-value="' + value + '"]').addClass('active');
+},
+
+receiveMessage: function(el, data) {
+  if (data.hasOwnProperty('selected')) {
+    this.setValue(el, data.selected);
+    $(el).trigger('change');
+  }
+}
+```
+
+## No Olvides el Evento Change
+
+```javascript
+receiveMessage: function(el, data) {
+  if (data.hasOwnProperty('selected')) {
+    this.setValue(el, data.selected);
+    $(el).trigger('change');  // ¡Importante!
+  }
+}
+```
+
+::: {.callout-warning}
+Sin `$(el).trigger('change')`, la actualización no se propaga a las dependencias reactivas.
+:::
+
+## También necesitamos escuchar 'change'
+
+```javascript
+subscribe: function(el, callback) {
+  $(el).on('click.triStateBinding', '.tri-state-option', function(e) {
+    // ... código de click ...
+    callback();
+  });
+
+  // Para receiveMessage
+  $(el).on('change.triStateBinding', function(e) {
+    callback();
+  });
+}
+```
+
+## Checkpoint 3
+
+Después de implementar `setValue()` y `receiveMessage()`:
+
+- [ ] El botón "Restablecer a 'Todas'" funciona
+- [ ] Al hacer clic, el toggle vuelve a "Todas"
+- [ ] La tabla muestra todas las tareas
+
+## Solución Completa del Input Binding
+
+```{.javascript code-line-numbers="|3-5|7-9|11-21|23-27|29-33"}
+var triStateBinding = new Shiny.InputBinding();
+
+$.extend(triStateBinding, {
+  find: function(scope) {
+    return $(scope).find('.tri-state-input');
+  },
+
+  getValue: function(el) {
+    return $(el).data('selected');
+  },
+
+  subscribe: function(el, callback) {
+    $(el).on('click.triStateBinding', '.tri-state-option', function(e) {
+      var value = $(this).data('value');
+      $(el).data('selected', value);
+      $(el).find('.tri-state-option').removeClass('active');
+      $(this).addClass('active');
+      callback();
+    });
+    $(el).on('change.triStateBinding', function(e) {
+      callback();
+    });
+  },
+
+  setValue: function(el, value) {
+    $(el).data('selected', value);
+    $(el).find('.tri-state-option').removeClass('active');
+    $(el).find('.tri-state-option[data-value="' + value + '"]').addClass('active');
+  },
+
+  receiveMessage: function(el, data) {
+    if (data.hasOwnProperty('selected')) {
+      this.setValue(el, data.selected);
+      $(el).trigger('change');
+    }
+  }
+});
+
+Shiny.inputBindings.register(triStateBinding, 'workshop.triStateInput');
+```
+
+## Extensión: Rate Policy
+
+Si hay tiempo, añade limitación de frecuencia:
+
+```javascript
+getRatePolicy: function() {
+  return { policy: 'debounce', delay: 250 };
+}
+```
+
+**Políticas disponibles:**
+
+- `direct`: Envía inmediatamente
+- `debounce`: Espera hasta que no haya nuevos valores
+- `throttle`: Máximo un envío por período
+
+# Pausa (5 min) {background-color="#7f8c8d"}
+
+::: {.r-fit-text}
+¡Estira las piernas!
+:::
+
+# Ejercicio 2: Output Binding {background-color="#e74c3c"}
+
+## ¿Qué Vamos a Construir?
+
+Una **tarjeta de estadísticas** que:
+
+- Muestra un título y un valor numérico
+- Cambia de color según umbrales (verde/amarillo/rojo)
+- Se actualiza reactivamente desde R
+
+## Estructura del Ejercicio
+
+```
+03-output-starter/
+├── app.R                    # App de Shiny
+├── R/
+│   └── statCard.R           # Funciones R (completas)
+└── www/
+    ├── css/
+    │   └── statcard.css     # Estilos (completos)
+    └── js/
+        └── statcard.js      # ¡AQUÍ TRABAJAREMOS!
+```
+
+## El Lado R Ya Está Completo
+
+```r
+statCardOutput <- function(outputId, width = "200px") {
+  tagList(
+    statCardDependency(),
+    tags$div(
+      id = outputId,
+      class = "stat-card",
+      style = paste0("width: ", width, ";"),
+      tags$div(class = "stat-title", "Loading..."),
+      tags$div(class = "stat-value", "--")
+    )
+  )
+}
+```
+
+## La Función Render en R
+
+```r
+renderStatCard <- function(expr) {
+  func <- shiny::quoToFunction(rlang::enquo0(expr))
+
+  shiny::createRenderFunction(
+    func,
+    transform = function(value, session, name, ...) {
+      list(
+        title = value$title,
+        value = value$value,
+        status = value$status
+      )
+    },
+    outputFunc = statCardOutput
+  )
+}
+```
+
+## El Esqueleto de JavaScript
+
+```{.javascript filename="www/js/statcard.js"}
+var statCardBinding = new Shiny.OutputBinding();
+
+$.extend(statCardBinding, {
+  find: function(scope) {
+    // TU CÓDIGO AQUÍ
+  },
+  renderValue: function(el, data) {
+    // TU CÓDIGO AQUÍ
+  }
+});
+
+Shiny.outputBindings.register(statCardBinding, 'workshop.statCard');
+```
+
+## Paso 1: Implementar `find()`
+
+Idéntico al patrón de input bindings:
+
+```javascript
+find: function(scope) {
+  return $(scope).find('.stat-card');
+}
+```
+
+## Paso 2: Implementar `renderValue()`
+
+Este método recibe los datos de R y actualiza el DOM:
+
+```javascript
+renderValue: function(el, data) {
+  // Actualizar título y valor
+  $(el).find('.stat-title').text(data.title);
+  $(el).find('.stat-value').text(data.value);
+
+  // Actualizar clase de estado
+  $(el).removeClass('status-good status-warning status-bad');
+  if (data.status) {
+    $(el).addClass('status-' + data.status);
+  }
+}
+```
+
+## Los Datos Llegan como JSON
+
+En R enviamos:
+
+```r
+list(title = "Puntuación", value = 75, status = "warning")
+```
+
+En JavaScript recibimos:
+
+```javascript
+{
+  title: "Puntuación",
+  value: 75,
+  status: "warning"
+}
+```
+
+## Checkpoint Final
+
+Después de implementar ambos métodos:
+
+- [ ] La tarjeta muestra el título y el valor
+- [ ] Al mover el slider, el valor se actualiza
+- [ ] El color cambia según los umbrales:
+  - 🟢 Verde: 80-100
+  - 🟡 Amarillo: 50-79
+  - 🔴 Rojo: 0-49
+
+## Solución Completa del Output Binding
+
+```{.javascript code-line-numbers="|3-5|7-15"}
+var statCardBinding = new Shiny.OutputBinding();
+
+$.extend(statCardBinding, {
+  find: function(scope) {
+    return $(scope).find('.stat-card');
+  },
+
+  renderValue: function(el, data) {
+    $(el).find('.stat-title').text(data.title);
+    $(el).find('.stat-value').text(data.value);
+
+    $(el).removeClass('status-good status-warning status-bad');
+    if (data.status) {
+      $(el).addClass('status-' + data.status);
+    }
+  }
+});
+
+Shiny.outputBindings.register(statCardBinding, 'workshop.statCard');
+```
+
+# Cierre y Próximos Pasos {background-color="#2c3e50"}
+
+## Recapitulación
+
+::: {.columns}
+::: {.column width="50%"}
+### Input Bindings
+
+1. `find()` - Localizar elementos
+2. `getValue()` - Extraer valor
+3. `subscribe()` - Escuchar eventos
+4. `setValue()` - Establecer valor
+5. `receiveMessage()` - Recibir de R
+:::
+
+::: {.column width="50%"}
+### Output Bindings
+
+1. `find()` - Localizar elementos
+2. `renderValue()` - Renderizar datos
+
+(¡Más simple!)
+:::
+:::
+
+## El Patrón Escala
+
+Estos patrones son la base de paquetes como:
+
+- **shinyWidgets**: Decenas de inputs personalizados de producción
+- **htmlwidgets**: Framework para D3.js y visualizaciones
+- **shiny.react**: Componentes React en Shiny
+- **plotly**, **leaflet**, **DT**: Widgets interactivos
+
+## Recursos para Profundizar
+
+| Recurso | Mejor para |
+|---------|------------|
+| *Outstanding User Interfaces with Shiny* (Granjon) | Internos de bindings |
+| *JavaScript for R* (Coene) | Fundamentos de JS en contexto R |
+| Documentación de htmlwidgets | Outputs de visualización D3.js |
+| posit-dev/shiny-bindings | Patrones emergentes, React |
+
+## Referencias Clave
+
+- Posit. "How to Create Custom Input Bindings." 2024.
+  <https://shiny.posit.co/r/articles/build/js-custom-input/>
+
+- Posit. "Build Custom Output Objects." 2024.
+  <https://shiny.posit.co/r/articles/build/building-outputs/>
+
+- Granjon, David. *Outstanding User Interfaces with Shiny*. Chapman and Hall/CRC, 2022.
+  <https://unleash-shiny.rinterface.com/>
+
+## Solución de Problemas Comunes
+
+| Problema | Solución |
+|----------|----------|
+| "La app no corre" | Verificar directorio de trabajo |
+| "Los cambios no aparecen" | Hard refresh (Ctrl+Shift+R) |
+| "Error de JavaScript en consola" | Revisar comas y punto y coma |
+| "El valor es undefined en R" | Verificar `return` en `getValue()` |
+
+## ¡Gracias!
+
+::: {.r-fit-text}
+**¡Han construido un input y un output personalizados desde cero!**
+:::
+
+::: {.fragment}
+El patrón siempre es el mismo:
+
+**R genera HTML → JavaScript maneja comportamiento → WebSocket los conecta**
+
+Todo lo demás son variaciones de este tema.
+:::
+
+## Contacto y Materiales
+
+::: {.columns}
+::: {.column width="50%"}
+### Repositorio
+
+Todo el código está disponible en:
+
+[github.com/...](https://github.com/)
+:::
+
+::: {.column width="50%"}
+### Preguntas
+
+¿Preguntas ahora o después?
+
+[correo@ejemplo.com](mailto:correo@ejemplo.com)
+:::
+:::

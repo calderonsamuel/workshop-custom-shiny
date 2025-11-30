@@ -1,0 +1,17 @@
+%%{init: {'theme': 'neutral', 'themeVariables': {'fontSize': '28px'}, 'flowchart': {'nodeSpacing': 35, 'rankSpacing': 45}}}%%
+flowchart LR
+    subgraph browser ["JavaScript (Browser)"]
+        A[Usuario] --> B[Input Binding]
+        F[Output Binding] --> G[DOM]
+    end
+
+    subgraph server ["R (Servidor)"]
+        C["input$x"] --> D[Reactiva]
+        D --> E["output$y"]
+    end
+
+    B -->|WebSocket| C
+    E -->|WebSocket| F
+
+    style browser fill:#e3f2fd,stroke:#1976d2,color:#000
+    style server fill:#fff3e0,stroke:#f57c00,color:#000

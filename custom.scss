@@ -78,7 +78,27 @@ $code-block-bg: #f8f9fa;
 
 // Mermaid diagram styling
 .reveal .mermaid {
-  font-size: 0.8em;
+  font-size: 0.9em;
+}
+
+.reveal .mermaid svg {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+.reveal .mermaid .nodeLabel {
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+}
+
+.reveal .mermaid .node rect,
+.reveal .mermaid .node polygon {
+  min-width: 120px;
+}
+
+.reveal .mermaid .cluster-label {
+  white-space: nowrap !important;
 }
 
 // Footer styling

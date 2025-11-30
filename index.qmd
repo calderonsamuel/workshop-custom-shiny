@@ -12,6 +12,8 @@ format:
     transition: fade
     footer: "Bindings Personalizados en Shiny | LatinR 2025"
     logo: ""
+    view-distance: 50
+    mobile-view-distance: 50
     mermaid:
       theme: neutral
 execute:
@@ -92,34 +94,7 @@ workshop-custom-shiny/
 
 ## El Flujo de Comunicación
 
-::: {.columns}
-::: {.column width="40%"}
-### Navegador (JS)
-
-1. Usuario hace clic
-2. **Input Binding** captura el evento
-3. Envía valor via WebSocket →
-4. ← Recibe datos via WebSocket
-5. **Output Binding** actualiza DOM
-:::
-
-::: {.column width="20%"}
-<br><br><br>
-
-**⟷ WebSocket ⟷**
-
-Conexión bidireccional persistente
-:::
-
-::: {.column width="40%"}
-### Servidor (R)
-
-1. Recibe `input$x`
-2. Ejecuta lógica reactiva
-3. Genera `output$y`
-4. Envía resultado al navegador
-:::
-:::
+![](images/flow-diagram.png){fig-align="center" width="100%"}
 
 ## Dos Registros Centrales
 

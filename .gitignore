@@ -2,3 +2,14 @@
 .Rhistory
 .RData
 .Ruserdata
+
+# Quarto
+/.quarto/
+*_files/
+*_cache/
+_site
+
+# macOS
+.DS_Store
+
+**/*.quarto_ipynb

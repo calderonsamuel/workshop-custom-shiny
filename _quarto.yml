@@ -1,0 +1,5 @@
+project:
+  type: website
+
+website:
+  title: "Creando Inputs y Outputs Personalizados para Shiny"

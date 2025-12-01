@@ -1017,7 +1017,7 @@ Todo lo demás son variaciones de este tema.
 
 Todo el código está disponible en:
 
-[github.com/...](https://github.com/)
+[Github](https://github.com/calderonsamuel/workshop-custom-shiny)
 :::
 
 ::: {.column width="50%"}
@@ -1025,6 +1025,6 @@ Todo el código está disponible en:
 
 ¿Preguntas ahora o después?
 
-[correo@ejemplo.com](mailto:correo@ejemplo.com)
+[Encuéntrame en LinkedIn](https://www.linkedin.com/in/samuelcalderon/)
 :::
 :::

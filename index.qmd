@@ -68,6 +68,42 @@ workshop-custom-shiny/
 └── reference/             # Recursos adicionales
 ```
 
+## Herramientas de Debugging
+
+::: {.columns}
+::: {.column width="50%"}
+### En R: `browser()`
+
+```r
+server <- function(input, output) {
+  observe({
+    browser()  # Pausa aquí
+    print(input$mi_input)
+  })
+}
+```
+
+Pausa la ejecución en R. Usa `n` (next), `c` (continue), `Q` (quit).
+:::
+
+::: {.column width="50%"}
+### En JavaScript: `debugger`
+
+```javascript
+getValue: function(el) {
+  debugger;  // Pausa aquí
+  return $(el).data('selected');
+}
+```
+
+Abre DevTools (F12) antes. La ejecución pausa en esa línea.
+:::
+:::
+
+::: {.callout-tip}
+Usaremos estas herramientas durante los ejercicios para ver el flujo de ejecución.
+:::
+
 # Fundamentos Conceptuales {background-color="#2c3e50"}
 
 ## ¿Qué es el DOM?

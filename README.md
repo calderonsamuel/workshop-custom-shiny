@@ -35,7 +35,7 @@ Este repositorio contiene el material del workshop "Creando inputs y outputs per
 ### 1. Clonar el repositorio
 
 ```bash
-git clone <url-del-repositorio>
+git clone https://github.com/calderonsamuel/workshop-custom-shiny
 cd workshop-custom-shiny
 ```
 

@@ -1,7 +1,8 @@
 ---
 title: "Creando Inputs y Outputs Personalizados para Shiny"
 subtitle: "Más Allá de los Widgets Incorporados"
-author: "LatinR 2025"
+author: "Samuel Calderons"
+date: "2025-12-01"
 format:
   revealjs:
     theme: [default, custom.scss]
@@ -10,7 +11,7 @@ format:
     code-line-numbers: false
     highlight-style: github
     transition: fade
-    footer: "Bindings Personalizados en Shiny | LatinR 2025"
+    footer: "Creando Inputs y Outputs Personalizados para Shiny | LatinR 2025"
     logo: ""
     view-distance: 50
     mobile-view-distance: 50
@@ -42,6 +43,14 @@ Al finalizar este taller podrás:
 2. **Construir** un input binding personalizado (toggle tri-estado)
 3. **Construir** un output binding personalizado (tarjeta de estadísticas)
 4. **Conocer** recursos para implementaciones más avanzadas
+
+## Sobre el expositor
+
+- Politólogo de Lima, Perú
+- Estudiando Maestría en Informática con mención en Ciencias de la computación
+- Trabajé algunos años en el Estado peruano, ahora trabajo en [Appsilon](https://www.appsilon.com/)
+- Fan de LatinR
+- Encuéntrame en [LinkedIn](https://www.linkedin.com/in/samuelcalderon/) y [Github](https://github.com/calderonsamuel)
 
 ## ¿Por qué crear bindings personalizados?
 

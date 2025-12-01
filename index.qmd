@@ -749,6 +749,68 @@ $.extend(statCardBinding, {
 Shiny.outputBindings.register(statCardBinding, 'workshop.statCard');
 ```
 
+# Extensión: Outputs que Generan Inputs {background-color="#9b59b6"}
+
+## El Patrón de DT, plotly y leaflet
+
+¿Cómo funciona `input$tabla_rows_selected` en DT?
+
+Los outputs pueden crear **inputs sintéticos** usando `Shiny.setInputValue()`:
+
+```javascript
+renderValue: function(el, data) {
+  var outputId = el.id;  // ej: "miTabla"
+
+  // Renderizar el output normalmente...
+
+  // Crear un input cuando el usuario interactúa
+  $(el).on('click', '.row', function() {
+    var selected = /* obtener selección */;
+    Shiny.setInputValue(outputId + '_selected', selected);
+  });
+}
+```
+
+En R: `input$miTabla_selected`
+
+## Shiny.setInputValue()
+
+```javascript
+// Sintaxis básica
+Shiny.setInputValue("inputId", valor);
+
+// Con namespace (dentro de módulos)
+Shiny.setInputValue(outputId + "_clicked", valor);
+
+// Como evento (notifica aunque el valor no cambie)
+Shiny.setInputValue("inputId", valor, {priority: "event"});
+```
+
+::: {.callout-tip}
+No necesitas crear un input binding formal - `setInputValue()` crea el input directamente.
+:::
+
+## Ejemplo: Stat Card Clickeable
+
+```javascript
+renderValue: function(el, data) {
+  // Renderizar como antes...
+  $(el).find('.stat-title').text(data.title);
+  $(el).find('.stat-value').text(data.value);
+
+  // Agregar interactividad
+  $(el).off('click').on('click', function() {
+    Shiny.setInputValue(
+      el.id + '_clicked',
+      data.value,
+      {priority: 'event'}
+    );
+  });
+}
+```
+
+En R: `observeEvent(input$miCard_clicked, { ... })`
+
 # Cierre y Próximos Pasos {background-color="#2c3e50"}
 
 ## Recapitulación

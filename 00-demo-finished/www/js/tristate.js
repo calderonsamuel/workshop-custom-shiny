@@ -1,51 +1,51 @@
-// Tri-State Input Binding
-// A custom Shiny input that cycles through three states
+// Input Binding de Tres Estados
+// Un input personalizado de Shiny que cicla entre tres estados
 
 var triStateBinding = new Shiny.InputBinding();
 
 $.extend(triStateBinding, {
-  // Find all instances of this input in the given scope
+  // Encontrar todas las instancias de este input en el scope dado
   find: function(scope) {
     return $(scope).find('.tri-state-input');
   },
 
-  // Get the current value to send to R
+  // Obtener el valor actual para enviar a R
   getValue: function(el) {
     return $(el).data('selected');
   },
 
-  // Set the value programmatically
+  // Establecer el valor programáticamente
   setValue: function(el, value) {
     $(el).data('selected', value);
     $(el).attr('data-selected', value);
-    // Update visual state
+    // Actualizar estado visual
     $(el).find('.tri-state-option').removeClass('active');
     $(el).find('.tri-state-option[data-value="' + value + '"]').addClass('active');
   },
 
-  // Subscribe to events that should trigger an update
+  // Suscribirse a eventos que deben disparar una actualización
   subscribe: function(el, callback) {
     $(el).on('click.triStateBinding', '.tri-state-option', function(e) {
       var value = $(this).data('value');
       $(el).data('selected', value);
       $(el).attr('data-selected', value);
-      // Update visual state
+      // Actualizar estado visual
       $(el).find('.tri-state-option').removeClass('active');
       $(this).addClass('active');
       callback();
     });
-    // Also listen for change events (triggered by receiveMessage)
+    // También escuchar eventos change (disparados por receiveMessage)
     $(el).on('change.triStateBinding', function(e) {
       callback();
     });
   },
 
-  // Clean up event handlers
+  // Limpiar manejadores de eventos
   unsubscribe: function(el) {
     $(el).off('.triStateBinding');
   },
 
-  // Receive messages from R (for updateTriStateInput)
+  // Recibir mensajes desde R (para updateTriStateInput)
   receiveMessage: function(el, data) {
     if (data.hasOwnProperty('selected')) {
       this.setValue(el, data.selected);
@@ -53,11 +53,11 @@ $.extend(triStateBinding, {
     }
   },
 
-  // Rate limit updates (optional - debounce rapid clicks)
+  // Limitar la frecuencia de actualizaciones (debounce para clics rápidos)
   getRatePolicy: function() {
     return { policy: 'debounce', delay: 250 };
   }
 });
 
-// Register the binding with Shiny
+// Registrar el binding con Shiny
 Shiny.inputBindings.register(triStateBinding, 'workshop.triStateInput');

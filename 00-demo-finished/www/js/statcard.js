@@ -1,35 +1,35 @@
-// Stat Card Output Binding
-// A custom Shiny output that displays metrics with conditional styling
+// Output Binding de Tarjeta de Estadísticas
+// Un output personalizado de Shiny que muestra métricas con estilos condicionales
 
 var statCardBinding = new Shiny.OutputBinding();
 
 $.extend(statCardBinding, {
-  // Find all instances of this output in the given scope
+  // Encontrar todas las instancias de este output en el scope dado
   find: function(scope) {
     return $(scope).find('.stat-card');
   },
 
-  // Render the value received from R
+  // Renderizar el valor recibido desde R
   renderValue: function(el, data) {
     if (data === null) {
-      $(el).find('.stat-title').text('No data');
+      $(el).find('.stat-title').text('Sin datos');
       $(el).find('.stat-value').text('--');
       $(el).removeClass('status-good status-warning status-bad');
       return;
     }
 
-    // Set the title and value text
+    // Establecer el texto del título y valor
     $(el).find('.stat-title').text(data.title);
     $(el).find('.stat-value').text(data.value);
 
-    // Remove any existing status class and add the new one
+    // Remover cualquier clase de estado existente y agregar la nueva
     $(el).removeClass('status-good status-warning status-bad');
     if (data.status) {
       $(el).addClass('status-' + data.status);
     }
   },
 
-  // Handle errors from R
+  // Manejar errores desde R
   renderError: function(el, error) {
     $(el).find('.stat-title').text('Error');
     $(el).find('.stat-value').text(error.message);
@@ -37,11 +37,11 @@ $.extend(statCardBinding, {
     $(el).addClass('status-bad');
   },
 
-  // Clear error state
+  // Limpiar estado de error
   clearError: function(el) {
     $(el).removeClass('status-bad');
   }
 });
 
-// Register the binding with Shiny
+// Registrar el binding con Shiny
 Shiny.outputBindings.register(statCardBinding, 'workshop.statCardOutput');

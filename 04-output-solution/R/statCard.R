@@ -1,87 +1,53 @@
-# Componente Output de Tarjeta de Estadísticas - SOLUCIÓN
-# Una tarjeta de métricas con estilos condicionales
+# Stat Card Output Component - SOLUTION
+# A metric display card with conditional styling
 
-#' Crear dependencia de tarjeta de estadísticas (solo CSS)
+#' Create a stat card output dependency
 #' @keywords internal
 statCardDependency <- function() {
   htmltools::htmlDependency(
-    name = "statcard-css",
+    name = "statcard",
     version = "1.0.0",
     src = c(file = normalizePath("www")),
+    script = "js/statcard.js",
     stylesheet = "css/statcard.css"
   )
 }
 
-#' Crear dependencia de JavaScript para binding reactivo
-#' @keywords internal
-statCardJsDependency <- function() {
-  htmltools::htmlDependency(
-    name = "statcard-js",
-    version = "1.0.0",
-    src = c(file = normalizePath("www")),
-    script = "js/statcard.js"
-  )
-}
-
-#' Crear una tarjeta de estadísticas
+#' Create a stat card output placeholder
 #'
-#' @param title El título de la tarjeta
-#' @param value El valor a mostrar
-#' @param status El estado de la tarjeta: "good", "warning", o "bad"
-#' @param width El ancho de la tarjeta (valor CSS)
-#' @param id Opcional: ID para usar como output reactivo
+#' @param outputId The output slot name
+#' @param width The width of the card (CSS value)
 #'
-#' @return Una tarjeta de estadísticas
-#' @export
-statCard <- function(title, value, status = NULL, width = "200px", id = NULL) {
-  status_class <- if (!is.null(status)) paste0(" status-", status) else ""
-
-  htmltools::tagList(
-    statCardDependency(),
-    htmltools::tags$div(
-      id = id,
-      class = paste0("stat-card", status_class),
-      style = paste0("width: ", width, ";"),
-      htmltools::tags$div(class = "stat-title", title),
-      htmltools::tags$div(class = "stat-value", value)
-    )
-  )
-}
-
-#' Crear un placeholder de output para tarjeta de estadísticas
-#'
-#' @param outputId El nombre del slot de output
-#' @param width El ancho de la tarjeta (valor CSS)
-#'
-#' @return Un contenedor de output para tarjeta de estadísticas
+#' @return A stat card output container
 #' @export
 statCardOutput <- function(outputId, width = "200px") {
   htmltools::tagList(
-    statCardJsDependency(),
-    statCard(
-      title = "Cargando...",
-      value = "--",
-      width = width,
-      id = outputId
+    statCardDependency(),
+    htmltools::tags$div(
+      id = outputId,
+      class = "stat-card",
+      style = paste0("width: ", width, ";"),
+      htmltools::tags$div(class = "stat-title", "Loading..."),
+      htmltools::tags$div(class = "stat-value", "--")
     )
   )
 }
 
-#' Renderizar una tarjeta de estadísticas
+#' Render a stat card
 #'
-#' @param expr Una expresión que retorna una lista con title, value, y status
+#' @param expr An expression that returns a list with title, value, and status
 #'
-#' @return Una función render para usar con statCardOutput
+#' @return A render function for use with statCardOutput
 #' @export
 renderStatCard <- function(expr) {
-  # Patrón moderno: capturar expresión como quosure y convertir a función
+  # Modern pattern: capture expression as quosure and convert to function
   func <- shiny::quoToFunction(rlang::enquo0(expr))
 
-  # Usar createRenderFunction para integración apropiada con Shiny
+  # Use createRenderFunction for proper Shiny integration
   shiny::createRenderFunction(
     func,
     transform = function(value, session, name, ...) {
-      # Asegurar que retornamos la estructura esperada
+      # Ensure we return the expected structure
       list(
         title = value$title,
         value = value$value,

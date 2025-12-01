@@ -43,6 +43,26 @@ Al finalizar este taller podrás:
 3. **Construir** un output binding personalizado (tarjeta de estadísticas)
 4. **Conocer** recursos para implementaciones más avanzadas
 
+## ¿Por qué crear bindings personalizados?
+
+### Limitaciones de Shiny base
+
+- El input que necesitas **no existe**
+- Los widgets existentes no se adaptan a tu UX
+- Quieres integrar una librería JavaScript específica
+- Necesitas comportamiento no estándar
+
+> Shiny incluye ~30 inputs... pero hay miles de posibilidades.
+
+## Beneficios de los bindings personalizados
+
+- **Control total** sobre apariencia y comportamiento
+- **Reutilización** en múltiples apps y proyectos
+- **Integración** de cualquier librería JavaScript
+- **Profesionalización** de tus aplicaciones
+
+> Los bindings personalizados son la puerta a interfaces únicas y profesionales.
+
 ## Verificación del Entorno
 
 Antes de comenzar, verifica que puedas ejecutar la demo:

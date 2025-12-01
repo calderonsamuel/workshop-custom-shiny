@@ -779,9 +779,58 @@ Shiny.outputBindings.register(statCardBinding, 'workshop.statCard');
 Estos patrones son la base de paquetes como:
 
 - **shinyWidgets**: Decenas de inputs personalizados de producción
-- **htmlwidgets**: Framework para D3.js y visualizaciones
+- **htmlwidgets**: Framework para bindear librerías JavaScript
 - **shiny.react**: Componentes React en Shiny
 - **plotly**, **leaflet**, **DT**: Widgets interactivos
+
+## ¿Qué es htmlwidgets?
+
+Un **framework** para crear widgets R que envuelven librerías JavaScript.
+
+```r
+# Genera estructura inicial del paquete
+htmlwidgets::scaffoldWidget("miWidget")
+```
+
+Esto crea automáticamente:
+
+- Archivos `.R`, `.js`, `.yaml` necesarios
+- Output binding de Shiny pre-configurado
+- Integración con RMarkdown/Quarto
+
+## Bindings Personalizados vs htmlwidgets
+
+| Aspecto | Bindings Personalizados | htmlwidgets |
+|---------|------------------------|-------------|
+| **Caso de uso** | Inputs y outputs simples | Visualizaciones complejas |
+| **Dependencias** | Solo Shiny | Framework adicional |
+| **Control** | Total sobre el código | Convenciones del framework |
+| **Curva** | Entender el protocolo | Aprender htmlwidgets API |
+| **Ejemplos** | Botones, selectores, cards | Gráficos D3, mapas, tablas |
+
+## ¿Cuándo usar cada uno?
+
+::: {.columns}
+::: {.column width="50%"}
+### Bindings Personalizados
+
+- Input que no existe en Shiny
+- Output con lógica simple
+- Control total del comportamiento
+- Sin dependencias adicionales
+- **Lo que aprendimos hoy**
+:::
+
+::: {.column width="50%"}
+### htmlwidgets
+
+- Envolver librería JS existente
+- Visualizaciones interactivas
+- Reutilizar en RMarkdown/Quarto
+- Ecosistema establecido
+- Ejemplos: plotly, leaflet, DT
+:::
+:::
 
 ## Recursos para Profundizar
 

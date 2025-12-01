@@ -34,6 +34,7 @@ $.extend(triStateBinding, {
   find: function(scope) {
     // TU CÓDIGO AQUÍ
     // Retorna todos los elementos con clase 'tri-state-input'
+    return $(scope).find('.tri-state-input');
 
   },
 
@@ -52,6 +53,7 @@ $.extend(triStateBinding, {
   getValue: function(el) {
     // TU CÓDIGO AQUÍ
     // Retorna el valor seleccionado actual del atributo data-selected
+    return $(el).data('selected');
 
   },
 

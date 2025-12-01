@@ -532,6 +532,49 @@ getRatePolicy: function() {
 - `debounce`: Espera hasta que no haya nuevos valores
 - `throttle`: Máximo un envío por período
 
+## Extensión: Tipos de Datos en getValue()
+
+`getValue()` puede retornar cualquier valor serializable a JSON:
+
+| JavaScript | R |
+|------------|---|
+| `"texto"` | `"texto"` (character) |
+| `123` | `123` (numeric) |
+| `true/false` | `TRUE/FALSE` (logical) |
+| `[1, 2, 3]` | `c(1, 2, 3)` (vector) |
+| `{a: 1, b: 2}` | `list(a = 1, b = 2)` |
+
+La conversión es automática vía JSON.
+
+## Extensión: Input Handlers Personalizados
+
+Para tipos especiales (ej: fechas), usa `getType()` + `registerInputHandler()`:
+
+::: {.columns}
+::: {.column width="50%"}
+**JavaScript:**
+```javascript
+getType: function(el) {
+  return "mipaquete.fecha";
+}
+```
+:::
+
+::: {.column width="50%"}
+**R (en .onLoad):**
+```r
+registerInputHandler(
+ "mipaquete.fecha",
+ function(x, session, name) {
+   as.Date(x)
+ }
+)
+```
+:::
+:::
+
+Handlers incluidos: `shiny.date`, `shiny.number`, `shiny.matrix`
+
 # Pausa (5 min) {background-color="#7f8c8d"}
 
 ::: {.r-fit-text}

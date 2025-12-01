@@ -599,6 +599,58 @@ renderStatCard <- function(expr) {
 }
 ```
 
+## ¿Qué hace `transform`?
+
+`transform` procesa el resultado de la expresión antes de que Shiny lo serialice:
+
+::: {.columns}
+::: {.column width="45%"}
+**Resultado de expr:**
+```r
+list(
+  title = "Score",
+  value = 75,
+  status = "good",
+  extra_data = "..."
+)
+```
+:::
+::: {.column width="55%"}
+**Después de transform:**
+```r
+list(
+  title = value$title,
+  value = value$value,
+  status = value$status
+)
+```
+:::
+:::
+
+::: {.callout-note}
+**`transform`** extrae solo los campos necesarios. Luego Shiny serializa el resultado a JSON y lo envía al binding vía WebSocket.
+:::
+
+## ¿Por qué usar una lista simple?
+
+En `renderStatCard`, el usuario pasa una lista directamente:
+
+```r
+output$card <- renderStatCard({
+  list(title = "Score", value = 75, status = "good")
+})
+```
+
+::: {.callout-tip}
+## Alternativas de diseño
+
+1. **Función auxiliar**: `statCardData("Score", 75, "good")` → más legible
+2. **Estilo htmlwidgets**: `statCard(...)` retorna objeto especial que `renderStatCard` detecta
+3. **Lista simple** (nuestra elección): Explícito, sin magia, fácil de entender
+
+Para un workshop, preferimos claridad sobre conveniencia.
+:::
+
 ## El Esqueleto de JavaScript
 
 ```{.javascript filename="www/js/statcard.js"}
